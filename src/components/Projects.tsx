@@ -16,7 +16,7 @@ const projects = [
     name: "CampaignForge",
     tagline: "LLM-driven campaign generation at scale",
     description:
-      "Creates, A/B tests, and optimizes marketing copy with GPT-4. Supports multi-channel output with brand voice consistency via fine-tuned prompts.",
+      "Creates, A/B tests, and optimizes marketing copy with GPT-4. Multi-channel output with brand voice consistency via fine-tuned prompts.",
     tags: ["React", "FastAPI", "OpenAI", "Redis"],
     accent: "#4A7C6B",
   },
@@ -42,32 +42,38 @@ const projects = [
 
 export default function Projects() {
   return (
-    <section id="projects" style={{ borderBottom: "1px solid var(--border)" }}>
-      {/* Header */}
-      <div
-        style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: "1px solid var(--border)" }}
-        className="proj-header-grid"
-      >
-        <div style={{ padding: "2rem 2.5rem", borderRight: "1px solid var(--border)" }}>
-          <p className="label">Projects</p>
-        </div>
-        <div style={{ padding: "2rem 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
-          <motion.h2
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
-            style={{
-              fontFamily: "var(--fraunces), Georgia, serif",
-              fontStyle: "italic",
-              fontWeight: 700,
-              fontSize: "clamp(1.4rem, 3vw, 2.25rem)",
-              color: "var(--ink)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Things I&apos;ve built.
-          </motion.h2>
+    <section id="projects" style={{ borderBottom: "1px solid var(--border)", padding: "5rem 3rem" }} className="projects-section">
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "3.5rem", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="label"
+              style={{ marginBottom: "0.75rem" }}
+            >
+              Projects
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.05 }}
+              style={{
+                fontFamily: "var(--fraunces), Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 700,
+                fontSize: "clamp(1.6rem, 3vw, 2.25rem)",
+                color: "var(--ink)",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Things I&apos;ve built.
+            </motion.h2>
+          </div>
           <a
             href="https://github.com/dupenodi"
             target="_blank"
@@ -77,113 +83,58 @@ export default function Projects() {
             All on GitHub ↗
           </a>
         </div>
-      </div>
 
-      {/* Grid */}
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
-        className="proj-grid"
-      >
-        {projects.map((p, i) => (
-          <motion.div
-            key={p.name}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.5, delay: (i % 2) * 0.08 }}
-            style={{
-              padding: "2.5rem",
-              borderRight: i % 2 === 0 ? "1px solid var(--border)" : "none",
-              borderBottom: i < 2 ? "1px solid var(--border)" : "none",
-            }}
-            className="proj-card"
-          >
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-              <span
-                style={{
-                  fontFamily: "var(--dm-sans)",
-                  fontSize: "0.625rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  color: p.accent,
-                }}
-              >
-                {p.num}
-              </span>
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  color: "var(--ink-soft)",
-                  opacity: 0.6,
-                }}
-              >
-                ↗
-              </span>
-            </div>
-
-            <h3
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1px", background: "var(--border)" }} className="projects-grid">
+          {projects.map((p, i) => (
+            <motion.div
+              key={p.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: (i % 2) * 0.07 }}
               style={{
-                fontFamily: "var(--fraunces)",
-                fontWeight: 700,
-                fontSize: "1.25rem",
-                color: "var(--ink)",
-                marginBottom: "0.375rem",
-                letterSpacing: "-0.01em",
+                padding: "2.25rem",
+                background: "var(--parchment)",
+                transition: "background 0.15s",
               }}
+              onMouseEnter={e => (e.currentTarget.style.background = "var(--surface)")}
+              onMouseLeave={e => (e.currentTarget.style.background = "var(--parchment)")}
             >
-              {p.name}
-            </h3>
-
-            <p
-              style={{
-                fontFamily: "var(--fraunces)",
-                fontStyle: "italic",
-                fontSize: "0.875rem",
-                color: "var(--accent)",
-                marginBottom: "0.875rem",
-              }}
-            >
-              {p.tagline}
-            </p>
-
-            <p
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--ink-mid)",
-                lineHeight: 1.75,
-                marginBottom: "1.5rem",
-              }}
-            >
-              {p.description}
-            </p>
-
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
-              {p.tags.map((t) => (
-                <span
-                  key={t}
-                  style={{
-                    padding: "0.2rem 0.625rem",
-                    fontSize: "0.7rem",
-                    border: "1px solid var(--border)",
-                    borderRadius: 4,
-                    color: "var(--ink-soft)",
-                    background: "var(--surface)",
-                  }}
-                >
-                  {t}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
+                <span style={{ fontFamily: "var(--dm-sans)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.1em", color: p.accent }}>
+                  {p.num}
                 </span>
-              ))}
-            </div>
-          </motion.div>
-        ))}
+                <span style={{ fontSize: "0.875rem", color: "var(--ink-soft)" }}>↗</span>
+              </div>
+
+              <h3 style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.25rem", color: "var(--ink)", marginBottom: "0.25rem", letterSpacing: "-0.01em" }}>
+                {p.name}
+              </h3>
+
+              <p style={{ fontFamily: "var(--fraunces)", fontStyle: "italic", fontSize: "0.875rem", color: p.accent, marginBottom: "0.875rem" }}>
+                {p.tagline}
+              </p>
+
+              <p style={{ fontSize: "0.875rem", color: "var(--ink-mid)", lineHeight: 1.75, marginBottom: "1.5rem" }}>
+                {p.description}
+              </p>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
+                {p.tags.map((t) => (
+                  <span key={t} style={{ padding: "0.2rem 0.625rem", fontSize: "0.7rem", border: "1px solid var(--border)", borderRadius: 4, color: "var(--ink-soft)", background: "var(--surface)" }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       <style>{`
         @media (max-width: 640px) {
-          .proj-header-grid { grid-template-columns: 1fr !important; }
-          .proj-header-grid > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
-          .proj-grid { grid-template-columns: 1fr !important; }
-          .proj-card { border-right: none !important; border-bottom: 1px solid var(--border) !important; }
+          .projects-section { padding: 3.5rem 1.5rem !important; }
+          .projects-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>

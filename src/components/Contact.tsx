@@ -38,156 +38,137 @@ export default function Contact() {
     fontFamily: "var(--dm-sans), system-ui, sans-serif",
     fontSize: "0.875rem",
     outline: "none",
-    transition: "border-color 0.15s ease",
+    transition: "border-color 0.15s",
   };
 
   return (
-    <section id="contact" style={{ borderBottom: "1px solid var(--border)" }}>
-      {/* Header */}
-      <div
-        style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: "1px solid var(--border)" }}
-        className="contact-header-grid"
-      >
-        <div style={{ padding: "2rem 2.5rem", borderRight: "1px solid var(--border)" }}>
-          <p className="label">Contact</p>
-        </div>
-        <div style={{ padding: "2rem 2.5rem" }}>
-          <motion.h2
+    <section id="contact" style={{ borderBottom: "1px solid var(--border)", padding: "5rem 3rem" }} className="contact-section">
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="label"
+          style={{ marginBottom: "1.5rem" }}
+        >
+          Contact
+        </motion.p>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.05 }}
+          style={{
+            fontFamily: "var(--fraunces), Georgia, serif",
+            fontStyle: "italic",
+            fontWeight: 700,
+            fontSize: "clamp(2rem, 4.5vw, 3.5rem)",
+            color: "var(--ink)",
+            letterSpacing: "-0.02em",
+            lineHeight: 1.15,
+            marginBottom: "4rem",
+            maxWidth: "22ch",
+          }}
+        >
+          Let&apos;s build something great together.
+        </motion.h2>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: "5rem", alignItems: "start" }} className="contact-grid">
+
+          {/* Form */}
+          <motion.form
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
-            style={{
-              fontFamily: "var(--fraunces), Georgia, serif",
-              fontStyle: "italic",
-              fontWeight: 700,
-              fontSize: "clamp(1.8rem, 4vw, 3rem)",
-              color: "var(--ink)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.15,
-            }}
+            onSubmit={submit}
+            style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}
           >
-            Let&apos;s build something great together.
-          </motion.h2>
-        </div>
-      </div>
-
-      {/* Body */}
-      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr 1fr" }} className="contact-body-grid">
-        <div style={{ borderRight: "1px solid var(--border)" }} />
-
-        {/* Form */}
-        <motion.form
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
-          onSubmit={submit}
-          style={{
-            padding: "2.5rem 2.5rem 3rem",
-            borderRight: "1px solid var(--border)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.25rem",
-          }}
-        >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem" }}>Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Your name"
+                  value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = "var(--accent)")}
+                  onBlur={e => (e.target.style.borderColor = "var(--border)")}
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem" }}>Email</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = "var(--accent)")}
+                  onBlur={e => (e.target.style.borderColor = "var(--border)")}
+                />
+              </div>
+            </div>
             <div>
-              <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem", letterSpacing: "0.04em" }}>Name</label>
-              <input
-                type="text"
+              <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem" }}>Message</label>
+              <textarea
                 required
-                placeholder="Your name"
-                value={form.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                style={inputStyle}
+                rows={5}
+                placeholder="What's on your mind?"
+                value={form.message}
+                onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                style={{ ...inputStyle, resize: "none" }}
                 onFocus={e => (e.target.style.borderColor = "var(--accent)")}
                 onBlur={e => (e.target.style.borderColor = "var(--border)")}
               />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem", letterSpacing: "0.04em" }}>Email</label>
-              <input
-                type="email"
-                required
-                placeholder="your@email.com"
-                value={form.email}
-                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                style={inputStyle}
-                onFocus={e => (e.target.style.borderColor = "var(--accent)")}
-                onBlur={e => (e.target.style.borderColor = "var(--border)")}
-              />
+              <button
+                type="submit"
+                disabled={status === "sending" || status === "sent"}
+                className="btn-primary"
+                style={{ opacity: status === "sending" || status === "sent" ? 0.6 : 1 }}
+              >
+                {status === "sending" ? "Sending…" : status === "sent" ? "Sent ✓" : status === "error" ? "Failed — email me directly" : "Send Message"}
+              </button>
             </div>
-          </div>
+          </motion.form>
 
-          <div>
-            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem", letterSpacing: "0.04em" }}>Message</label>
-            <textarea
-              required
-              rows={5}
-              placeholder="What's on your mind?"
-              value={form.message}
-              onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-              style={{ ...inputStyle, resize: "none" }}
-              onFocus={e => (e.target.style.borderColor = "var(--accent)")}
-              onBlur={e => (e.target.style.borderColor = "var(--border)")}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={status === "sending" || status === "sent"}
-            className="btn-primary"
-            style={{ alignSelf: "flex-start", opacity: status === "sending" || status === "sent" ? 0.6 : 1 }}
+          {/* Sidebar */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.1 }}
+            style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
           >
-            {status === "sending" ? "Sending…" : status === "sent" ? "Sent ✓" : status === "error" ? "Failed — email me directly" : "Send Message"}
-          </button>
-        </motion.form>
+            <div>
+              <p className="label" style={{ marginBottom: "0.5rem" }}>Email directly</p>
+              <a
+                href="mailto:hi@dupenodi.dev"
+                style={{ fontFamily: "var(--fraunces)", fontWeight: 600, fontSize: "1.0625rem", color: "var(--ink)", textDecoration: "none" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--ink)")}
+              >
+                hi@dupenodi.dev
+              </a>
+            </div>
 
-        {/* Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.1 }}
-          style={{ padding: "2.5rem 2.5rem 3rem", display: "flex", flexDirection: "column", gap: "2rem" }}
-        >
-          <div>
-            <p className="label" style={{ marginBottom: "0.5rem" }}>Email</p>
-            <a
-              href="mailto:hi@dupenodi.dev"
-              style={{
-                fontFamily: "var(--fraunces)",
-                fontWeight: 600,
-                fontSize: "1.125rem",
-                color: "var(--ink)",
-                textDecoration: "none",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--ink)")}
-            >
-              hi@dupenodi.dev
-            </a>
-          </div>
-
-          <div>
-            <p className="label" style={{ marginBottom: "0.875rem" }}>Elsewhere</p>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div>
+              <p className="label" style={{ marginBottom: "0.875rem" }}>Elsewhere</p>
               {socials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "0.75rem 0",
-                    borderBottom: "1px solid var(--border)",
-                    textDecoration: "none",
-                    transition: "color 0.12s",
-                  }}
+                  style={{ display: "flex", justifyContent: "space-between", padding: "0.75rem 0", borderBottom: "1px solid var(--border)", textDecoration: "none", transition: "background 0.12s" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "var(--hover-bg)")}
                   onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                 >
@@ -196,48 +177,20 @@ export default function Contact() {
                 </a>
               ))}
             </div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
 
-      {/* Footer */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "200px 1fr",
-          borderTop: "1px solid var(--border)",
-        }}
-        className="footer-grid"
-      >
-        <div style={{ borderRight: "1px solid var(--border)" }} />
-        <div
-          style={{
-            padding: "1.5rem 2.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "0.5rem",
-          }}
-        >
-          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>
-            © 2025 Sarath Donepudi
-          </p>
-          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>
-            Bengaluru, India
-          </p>
+        {/* Footer */}
+        <div style={{ marginTop: "4rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>© 2025 Sarath Donepudi</p>
+          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>Bengaluru, India</p>
         </div>
       </div>
 
       <style>{`
         @media (max-width: 768px) {
-          .contact-header-grid { grid-template-columns: 1fr !important; }
-          .contact-header-grid > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
-          .contact-body-grid { grid-template-columns: 1fr !important; }
-          .contact-body-grid > div:first-child { display: none; }
-          .contact-body-grid > div { border-right: none !important; }
-          .footer-grid { grid-template-columns: 1fr !important; }
-          .footer-grid > div:first-child { display: none; }
+          .contact-section { padding: 3.5rem 1.5rem !important; }
+          .contact-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
         }
       `}</style>
     </section>

@@ -9,150 +9,118 @@ const posts = [
 
 export default function Blog() {
   return (
-    <section id="blog" style={{ borderBottom: "1px solid var(--border)" }}>
-      {/* Header */}
-      <div
-        style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: "1px solid var(--border)" }}
-        className="blog-header-grid"
-      >
-        <div style={{ padding: "2rem 2.5rem", borderRight: "1px solid var(--border)" }}>
-          <p className="label">Writing</p>
-        </div>
-        <div style={{ padding: "2rem 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
-          <motion.h2
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
-            style={{
-              fontFamily: "var(--fraunces), Georgia, serif",
-              fontStyle: "italic",
-              fontWeight: 700,
-              fontSize: "clamp(1.4rem, 3vw, 2.25rem)",
-              color: "var(--ink)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Thoughts & words.
-          </motion.h2>
-          <a
-            href="https://reminiscence.bearblog.dev"
-            target="_blank"
-            rel="noreferrer"
-            style={{ fontSize: "0.8125rem", color: "var(--accent)", textDecoration: "none" }}
-          >
+    <section id="blog" style={{ borderBottom: "1px solid var(--border)", padding: "5rem 3rem" }} className="blog-section">
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "3.5rem", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="label"
+              style={{ marginBottom: "0.75rem" }}
+            >
+              Writing
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.05 }}
+              style={{
+                fontFamily: "var(--fraunces), Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 700,
+                fontSize: "clamp(1.6rem, 3vw, 2.25rem)",
+                color: "var(--ink)",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Thoughts &amp; words.
+            </motion.h2>
+          </div>
+          <a href="https://reminiscence.bearblog.dev" target="_blank" rel="noreferrer"
+            style={{ fontSize: "0.8125rem", color: "var(--accent)", textDecoration: "none" }}>
             Read all posts ↗
           </a>
         </div>
-      </div>
 
-      {/* Featured */}
-      <motion.a
-        href="https://reminiscence.bearblog.dev"
-        target="_blank"
-        rel="noreferrer"
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.55 }}
-        style={{
-          display: "grid",
-          gridTemplateColumns: "200px 1fr",
-          borderBottom: "1px solid var(--border)",
-          textDecoration: "none",
-          transition: "background 0.15s ease",
-        }}
-        className="blog-featured-grid"
-        onMouseEnter={e => (e.currentTarget.style.background = "var(--hover-bg)")}
-        onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-      >
-        <div style={{ padding: "2.5rem 2.5rem", borderRight: "1px solid var(--border)" }}>
-          <p style={{ fontFamily: "var(--fraunces)", fontStyle: "italic", fontWeight: 700, fontSize: "1.25rem", color: "var(--ink)" }}>
-            Reminiscence
-          </p>
-          <p style={{ fontSize: "0.75rem", color: "var(--ink-soft)", marginTop: "0.25rem" }}>Blog</p>
-        </div>
-        <div style={{ padding: "2.5rem 2.5rem" }}>
-          <p
-            style={{
-              fontFamily: "var(--fraunces)",
-              fontStyle: "italic",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              color: "var(--ink)",
-              lineHeight: 1.35,
-              letterSpacing: "-0.01em",
-              marginBottom: "1rem",
-              maxWidth: "40ch",
-            }}
-          >
-            Writing on building, thinking, and traveling.
-          </p>
-          <p style={{ color: "var(--ink-mid)", fontSize: "0.9rem", maxWidth: "52ch", lineHeight: 1.75 }}>
-            Personal essays and notes from the intersection of technology, travel, and reflection.
-            Documenting thought as a developer and a human.
-          </p>
-          <p style={{ color: "var(--accent)", fontSize: "0.8125rem", marginTop: "1rem" }}>
-            reminiscence.bearblog.dev ↗
-          </p>
-        </div>
-      </motion.a>
-
-      {/* Post list */}
-      {posts.map((post, i) => (
+        {/* Featured blog link */}
         <motion.a
-          key={post.title}
           href="https://reminiscence.bearblog.dev"
           target="_blank"
           rel="noreferrer"
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.45, delay: i * 0.06 }}
+          transition={{ duration: 0.55 }}
           style={{
-            display: "grid",
-            gridTemplateColumns: "200px 1fr",
-            borderBottom: i < posts.length - 1 ? "1px solid var(--border)" : "none",
+            display: "block",
+            padding: "2.5rem",
+            border: "1px solid var(--border)",
+            borderRadius: 10,
             textDecoration: "none",
-            transition: "background 0.15s ease",
+            marginBottom: "1px",
+            transition: "background 0.15s, border-color 0.15s",
+            background: "var(--surface)",
           }}
-          className="blog-post-grid"
-          onMouseEnter={e => (e.currentTarget.style.background = "var(--hover-bg)")}
-          onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}
         >
-          <div style={{ padding: "1.5rem 2.5rem", borderRight: "1px solid var(--border)" }}>
-            <span
-              style={{
-                fontSize: "0.7rem",
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "var(--accent)",
-              }}
-            >
-              {post.tag}
-            </span>
-          </div>
-          <div style={{ padding: "1.5rem 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <p style={{ fontFamily: "var(--fraunces)", fontSize: "0.9375rem", color: "var(--ink)", lineHeight: 1.5 }}>
-              {post.title}
-            </p>
-            <span style={{ color: "var(--ink-soft)", fontSize: "0.875rem", flexShrink: 0, marginLeft: "1rem" }}>↗</span>
-          </div>
+          <p className="label" style={{ marginBottom: "1rem" }}>Personal blog</p>
+          <p style={{ fontFamily: "var(--fraunces)", fontStyle: "italic", fontWeight: 700, fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)", color: "var(--ink)", lineHeight: 1.3, letterSpacing: "-0.01em", marginBottom: "0.875rem", maxWidth: "38ch" }}>
+            Reminiscence — writing on building, thinking, and traveling.
+          </p>
+          <p style={{ color: "var(--ink-mid)", fontSize: "0.9rem", maxWidth: "52ch", lineHeight: 1.75, marginBottom: "1.25rem" }}>
+            Personal essays and notes from the intersection of technology, travel, and reflection.
+          </p>
+          <p style={{ color: "var(--accent)", fontSize: "0.8125rem" }}>reminiscence.bearblog.dev ↗</p>
         </motion.a>
-      ))}
+
+        {/* Post list */}
+        <div style={{ borderTop: "1px solid var(--border)" }}>
+          {posts.map((post, i) => (
+            <motion.a
+              key={post.title}
+              href="https://reminiscence.bearblog.dev"
+              target="_blank"
+              rel="noreferrer"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: i * 0.06 }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "1.25rem 0",
+                borderBottom: "1px solid var(--border)",
+                textDecoration: "none",
+                gap: "1rem",
+                transition: "background 0.12s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "var(--hover-bg)")}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+                <span style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--accent)", flexShrink: 0 }}>
+                  {post.tag}
+                </span>
+                <p style={{ fontFamily: "var(--fraunces)", fontSize: "0.9375rem", color: "var(--ink)", lineHeight: 1.4 }}>
+                  {post.title}
+                </p>
+              </div>
+              <span style={{ color: "var(--ink-soft)", flexShrink: 0 }}>↗</span>
+            </motion.a>
+          ))}
+        </div>
+      </div>
 
       <style>{`
         @media (max-width: 640px) {
-          .blog-header-grid, .blog-featured-grid, .blog-post-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .blog-header-grid > div:first-child,
-          .blog-featured-grid > div:first-child,
-          .blog-post-grid > div:first-child {
-            border-right: none !important;
-            border-bottom: 1px solid var(--border);
-          }
+          .blog-section { padding: 3.5rem 1.5rem !important; }
         }
       `}</style>
     </section>

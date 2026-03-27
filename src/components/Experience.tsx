@@ -10,139 +10,109 @@ const inView = (delay = 0) => ({
 
 export default function Experience() {
   return (
-    <section id="experience" style={{ borderBottom: "1px solid var(--border)" }}>
-      {/* Header row */}
-      <div
-        style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: "1px solid var(--border)" }}
-        className="exp-header-grid"
-      >
-        <div style={{ padding: "2rem 2.5rem", borderRight: "1px solid var(--border)" }}>
-          <p className="label">Experience</p>
-        </div>
-        <div style={{ padding: "2rem 2.5rem" }}>
-          <motion.h2
-            {...inView(0)}
-            style={{
-              fontFamily: "var(--fraunces), Georgia, serif",
-              fontStyle: "italic",
-              fontWeight: 700,
-              fontSize: "clamp(1.4rem, 3vw, 2.25rem)",
-              color: "var(--ink)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Where I&apos;ve worked & learned.
-          </motion.h2>
-        </div>
-      </div>
+    <section id="experience" style={{ borderBottom: "1px solid var(--border)", padding: "5rem 3rem" }} className="exp-section">
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
-      {/* Niti AI */}
-      <motion.div
-        {...inView(0.1)}
-        style={{ borderBottom: "1px solid var(--border)" }}
-        className="exp-row"
-      >
-        <div style={{ display: "grid", gridTemplateColumns: "200px 1fr" }} className="exp-inner-grid">
-          {/* Left */}
-          <div
-            style={{
-              padding: "2.5rem 2.5rem",
-              borderRight: "1px solid var(--border)",
-            }}
-          >
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
-              <p style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "0.9375rem", color: "var(--ink)" }}>
+        <motion.p {...inView(0)} className="label" style={{ marginBottom: "3rem" }}>
+          Experience
+        </motion.p>
+
+        <motion.h2
+          {...inView(0.05)}
+          style={{
+            fontFamily: "var(--fraunces), Georgia, serif",
+            fontStyle: "italic",
+            fontWeight: 700,
+            fontSize: "clamp(1.6rem, 3vw, 2.25rem)",
+            color: "var(--ink)",
+            letterSpacing: "-0.02em",
+            marginBottom: "3.5rem",
+          }}
+        >
+          Where I&apos;ve worked &amp; learned.
+        </motion.h2>
+
+        {/* Niti AI */}
+        <motion.div
+          {...inView(0.1)}
+          style={{
+            borderTop: "1px solid var(--border)",
+            paddingTop: "2.5rem",
+            paddingBottom: "2.5rem",
+            borderBottom: "1px solid var(--border)",
+            marginBottom: "2rem",
+          }}
+        >
+          <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "3rem" }} className="exp-row-grid">
+            {/* Left — company meta */}
+            <div>
+              <p style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.125rem", color: "var(--ink)", marginBottom: "0.25rem" }}>
                 Niti AI
               </p>
-              <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>Aug 2023 — Present</p>
-              <span style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.375rem",
-                marginTop: "0.5rem",
-                fontSize: "0.7rem",
-                color: "#4A7C6B",
-                fontWeight: 600,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
-              }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4A7C6B", display: "inline-block" }} />
-                Current
-              </span>
-            </div>
-          </div>
-
-          {/* Right */}
-          <div style={{ padding: "2.5rem 2.5rem 3rem" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-              <div>
-                <h3 style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.25rem", color: "var(--ink)", marginBottom: "0.25rem" }}>
-                  Full Stack Developer
-                </h3>
-                <p style={{ color: "var(--accent)", fontSize: "0.875rem", fontWeight: 500 }}>Full-time · Bengaluru, India</p>
+              <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", marginBottom: "0.75rem" }}>Aug 2023 — Present · 2 yrs+</p>
+              <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>Bengaluru, India</p>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", marginTop: "0.875rem", padding: "0.25rem 0.625rem", background: "rgba(74,124,107,0.1)", border: "1px solid rgba(74,124,107,0.2)", borderRadius: 20 }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#4A7C6B", display: "inline-block" }} />
+                <span style={{ fontSize: "0.6875rem", color: "#4A7C6B", fontWeight: 600 }}>Current role</span>
               </div>
             </div>
 
-            <ul style={{ display: "flex", flexDirection: "column", gap: "0.875rem", marginBottom: "2rem" }}>
-              {[
-                "Designed and shipped foundational AI infrastructure supporting agent architecture, internal tooling, and customer-facing workflows.",
-                "Integrated LLMs via LangChain, OpenAI, and vector databases to automate audience targeting, campaign generation, and execution.",
-                "Built sleek interfaces in Next.js and React alongside robust Python/Go backends with Supabase & PostgreSQL.",
-                "Wore multiple hats from infra planning and customer onboarding to live demos and product strategy.",
-              ].map((h, i) => (
-                <li key={i} style={{ display: "flex", gap: "0.75rem", color: "var(--ink-mid)", fontSize: "0.9rem", lineHeight: 1.7 }}>
-                  <span style={{ color: "var(--accent)", flexShrink: 0, marginTop: "0.1em" }}>—</span>
-                  {h}
-                </li>
-              ))}
-            </ul>
+            {/* Right — details */}
+            <div>
+              <p style={{ fontFamily: "var(--fraunces)", fontStyle: "italic", fontWeight: 600, fontSize: "1.25rem", color: "var(--ink)", marginBottom: "1.5rem" }}>
+                Founding Engineer — Full Stack Developer
+              </p>
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-              {["Next.js", "React", "Python", "Go", "LangChain", "OpenAI", "Supabase", "PostgreSQL"].map((t) => (
-                <span
-                  key={t}
-                  style={{
-                    padding: "0.25rem 0.75rem",
-                    fontSize: "0.75rem",
-                    border: "1px solid var(--border)",
-                    borderRadius: 4,
-                    color: "var(--ink-mid)",
-                    background: "var(--surface)",
-                  }}
-                >
-                  {t}
-                </span>
-              ))}
+              <ul style={{ display: "flex", flexDirection: "column", gap: "0.875rem", marginBottom: "2rem" }}>
+                {[
+                  "Designed and shipped foundational AI infrastructure supporting agent architecture, internal tooling, and customer-facing workflows.",
+                  "Integrated LLMs via LangChain, OpenAI, and vector databases to automate audience targeting, campaign generation, and execution.",
+                  "Built interfaces in Next.js/React alongside Python/Go backends with Supabase & PostgreSQL.",
+                  "Wore every hat — infra planning, customer onboarding, live demos, and product strategy.",
+                ].map((h, i) => (
+                  <li key={i} style={{ display: "flex", gap: "0.75rem", color: "var(--ink-mid)", fontSize: "0.9rem", lineHeight: 1.7, listStyle: "none" }}>
+                    <span style={{ color: "var(--accent)", flexShrink: 0, marginTop: "0.2em" }}>—</span>
+                    {h}
+                  </li>
+                ))}
+              </ul>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                {["Next.js", "React", "Python", "Go", "LangChain", "OpenAI", "Supabase", "PostgreSQL"].map((t) => (
+                  <span key={t} style={{ padding: "0.2rem 0.625rem", fontSize: "0.75rem", border: "1px solid var(--border)", borderRadius: 4, color: "var(--ink-soft)", background: "var(--surface)" }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Education */}
-      <motion.div {...inView(0.2)} className="exp-row">
-        <div style={{ display: "grid", gridTemplateColumns: "200px 1fr" }} className="exp-inner-grid">
-          <div style={{ padding: "2.5rem 2.5rem", borderRight: "1px solid var(--border)" }}>
-            <p style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "0.9375rem", color: "var(--ink)", marginBottom: "0.375rem" }}>
-              SSN College of Engineering
-            </p>
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>2020 — 2024</p>
+        {/* Education */}
+        <motion.div {...inView(0.2)}>
+          <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "3rem" }} className="exp-row-grid">
+            <div>
+              <p style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.125rem", color: "var(--ink)", marginBottom: "0.25rem" }}>
+                SSN College of Engineering
+              </p>
+              <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>2020 — 2024</p>
+              <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", marginTop: "0.25rem" }}>Chennai, India</p>
+            </div>
+            <div>
+              <p className="label" style={{ marginBottom: "0.5rem" }}>Education</p>
+              <p style={{ fontFamily: "var(--fraunces)", fontStyle: "italic", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)" }}>
+                Bachelor of Engineering — Computer Science
+              </p>
+            </div>
           </div>
-          <div style={{ padding: "2.5rem 2.5rem 3rem" }}>
-            <p className="label" style={{ marginBottom: "0.5rem" }}>Education</p>
-            <h3 style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.125rem", color: "var(--ink)", marginBottom: "0.25rem" }}>
-              Bachelor of Engineering — Computer Science
-            </h3>
-            <p style={{ color: "var(--ink-soft)", fontSize: "0.875rem" }}>Chennai, India</p>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+
+      </div>
 
       <style>{`
         @media (max-width: 640px) {
-          .exp-header-grid { grid-template-columns: 1fr !important; }
-          .exp-header-grid > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
-          .exp-inner-grid { grid-template-columns: 1fr !important; }
-          .exp-inner-grid > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
+          .exp-section { padding: 3.5rem 1.5rem !important; }
+          .exp-row-grid { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
         }
       `}</style>
     </section>
