@@ -1,107 +1,146 @@
 "use client";
 import { motion } from "framer-motion";
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 30 },
+const inView = (delay = 0) => ({
+  initial: { opacity: 0, y: 16 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay },
+  viewport: { once: true, margin: "-60px" },
+  transition: { duration: 0.55, delay },
 });
 
 export default function About() {
   return (
-    <section id="about" className="py-32 md:py-40 px-6 relative">
-      {/* Background glow */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-violet-600/8 rounded-full blur-[120px] pointer-events-none" />
+    <section id="about" style={{ borderBottom: "1px solid var(--border)" }}>
+      {/* Section header */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "200px 1fr",
+          borderBottom: "1px solid var(--border)",
+        }}
+        className="about-header-grid"
+      >
+        <div style={{ padding: "2rem 2.5rem", borderRight: "1px solid var(--border)" }}>
+          <p className="label">About</p>
+        </div>
+        <div style={{ padding: "2rem 2.5rem" }}>
+          <motion.h2
+            {...inView(0)}
+            style={{
+              fontFamily: "var(--fraunces), Georgia, serif",
+              fontStyle: "italic",
+              fontWeight: 700,
+              fontSize: "clamp(1.6rem, 3.5vw, 2.5rem)",
+              color: "var(--ink)",
+              lineHeight: 1.2,
+              letterSpacing: "-0.02em",
+              maxWidth: "36ch",
+            }}
+          >
+            Building at the frontier — where the code ends and the product begins.
+          </motion.h2>
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
-          {/* Left */}
-          <div>
-            <motion.p {...fadeUp(0)} className="section-label mb-5">
-              // about_me
-            </motion.p>
+      {/* Body */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "200px 1fr 1fr",
+          minHeight: 320,
+        }}
+        className="about-body-grid"
+      >
+        {/* Empty left column */}
+        <div style={{ borderRight: "1px solid var(--border)" }} />
 
-            <motion.h2
-              {...fadeUp(0.1)}
-              className="font-display font-bold text-4xl md:text-6xl leading-tight tracking-tight mb-8"
-            >
-              Building the future,{" "}
-              <span className="gradient-text">one layer at a time.</span>
-            </motion.h2>
+        {/* Bio */}
+        <div style={{ padding: "2.5rem 2.5rem 3rem", borderRight: "1px solid var(--border)" }}>
+          <motion.div {...inView(0.1)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <p style={{ color: "var(--ink-mid)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
+              I&apos;m Sharath — a full stack AI developer and founding engineer at{" "}
+              <strong style={{ color: "var(--ink)", fontWeight: 600 }}>Niti AI</strong>,
+              building AI-first infrastructure to power the future of retention marketing.
+            </p>
+            <p style={{ color: "var(--ink-mid)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
+              I work across the entire stack — sleek interfaces in{" "}
+              <strong style={{ color: "var(--ink)", fontWeight: 500 }}>Next.js</strong> and React,
+              robust backends in <strong style={{ color: "var(--ink)", fontWeight: 500 }}>Python</strong>{" "}
+              and Go, and LLM integration via LangChain, OpenAI, and vector databases.
+            </p>
+            <p style={{ color: "var(--ink-mid)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
+              Being early means wearing every hat — building while listening, pitching while
+              debugging, and shaping both the product and the platform behind it.
+            </p>
+            <p style={{ color: "var(--ink-mid)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
+              Outside code, I write, travel, and explore creative technology. Drawn to long
+              conversations, language learning, and documenting thought.
+            </p>
+          </motion.div>
+        </div>
 
-            <motion.div {...fadeUp(0.2)} className="space-y-4 text-slate-400 leading-relaxed">
-              <p>
-                I&apos;m Sharath — a full stack AI developer and founding engineer at{" "}
-                <span className="text-white">Niti AI</span>, where I&apos;m helping build
-                AI-first infrastructure to power the future of retention marketing.
+        {/* Meta / links */}
+        <div style={{ padding: "2.5rem 2.5rem 3rem" }}>
+          <motion.div {...inView(0.2)} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            {/* Location */}
+            <div>
+              <p className="label" style={{ marginBottom: "0.375rem" }}>Based in</p>
+              <p style={{ color: "var(--ink)", fontWeight: 500 }}>Bengaluru, India</p>
+            </div>
+
+            {/* Currently */}
+            <div>
+              <p className="label" style={{ marginBottom: "0.375rem" }}>Currently</p>
+              <p style={{ color: "var(--ink)", fontWeight: 500 }}>
+                Founding Engineer @ Niti AI
               </p>
-              <p>
-                I work across the entire stack: building sleek interfaces in{" "}
-                <span className="text-slate-300">Next.js</span> and{" "}
-                <span className="text-slate-300">React</span>, robust backends in{" "}
-                <span className="text-slate-300">Python</span> and{" "}
-                <span className="text-slate-300">Go</span>, and integrating LLMs via{" "}
-                <span className="text-slate-300">LangChain</span> and{" "}
-                <span className="text-slate-300">OpenAI</span> for audience targeting,
-                campaign generation, and agent orchestration.
-              </p>
-              <p>
-                Being early means wearing every hat — building while listening, pitching
-                while debugging, and shaping both the product and the platform behind it.
-              </p>
-              <p>
-                Outside code, I write, travel, and explore creative technology. I&apos;m
-                drawn to long conversations, language learning, and documenting thought.
-              </p>
-            </motion.div>
+              <p style={{ color: "var(--ink-soft)", fontSize: "0.875rem" }}>Aug 2023 — Present</p>
+            </div>
 
-            <motion.div {...fadeUp(0.3)} className="mt-8 flex gap-4">
-              <a
-                href="https://reminiscence.bearblog.dev"
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm text-violet-400 hover:text-violet-300 transition-colors border-b border-violet-400/30 hover:border-violet-300/50 pb-0.5"
-              >
-                Read my writing ↗
-              </a>
-              <a
-                href="https://github.com/dupenodi"
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm text-slate-400 hover:text-slate-300 transition-colors border-b border-slate-400/30 hover:border-slate-300/50 pb-0.5"
-              >
-                GitHub ↗
-              </a>
-            </motion.div>
-          </div>
-
-          {/* Right — stats */}
-          <motion.div {...fadeUp(0.2)} className="grid grid-cols-2 gap-4">
-            {[
-              { value: "2+", label: "Years building", sub: "@ Niti AI" },
-              { value: "0→1", label: "Founding engineer", sub: "Full ownership" },
-              { value: "∞", label: "Hats worn", sub: "Infra to onboarding" },
-              { value: "AI", label: "Native stack", sub: "LLMs, agents, RAG" },
-            ].map((s, i) => (
-              <motion.div
-                key={s.label}
-                initial={{ opacity: 0, scale: 0.92 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 * i, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-                className="glass rounded-2xl p-6 hover:border-violet-500/20 transition-colors duration-300 group"
-              >
-                <p className="font-display font-black text-4xl gradient-text mb-2 group-hover:scale-105 transition-transform duration-300">
-                  {s.value}
-                </p>
-                <p className="text-white text-sm font-medium mb-1">{s.label}</p>
-                <p className="text-slate-500 text-xs">{s.sub}</p>
-              </motion.div>
-            ))}
+            {/* Links */}
+            <div>
+              <p className="label" style={{ marginBottom: "0.75rem" }}>Links</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                {[
+                  { label: "GitHub", href: "https://github.com/dupenodi" },
+                  { label: "LinkedIn", href: "https://linkedin.com/in/sarath-donepudi" },
+                  { label: "Blog — Reminiscence", href: "https://reminiscence.bearblog.dev" },
+                  { label: "Email", href: "mailto:hi@dupenodi.dev" },
+                ].map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      color: "var(--accent)",
+                      fontSize: "0.875rem",
+                      textDecoration: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.375rem",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "var(--ink)")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "var(--accent)")}
+                  >
+                    {l.label} ↗
+                  </a>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .about-header-grid { grid-template-columns: 1fr !important; }
+          .about-header-grid > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
+          .about-body-grid { grid-template-columns: 1fr !important; }
+          .about-body-grid > div:first-child { display: none; }
+          .about-body-grid > div { border-right: none !important; }
+        }
+      `}</style>
     </section>
   );
 }

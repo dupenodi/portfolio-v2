@@ -3,198 +3,243 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 const socials = [
-  { label: "GitHub", href: "https://github.com/dupenodi", handle: "@dupenodi" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/sarath-donepudi", handle: "sarath-donepudi" },
-  { label: "Blog", href: "https://reminiscence.bearblog.dev", handle: "reminiscence" },
-  { label: "Email", href: "mailto:hi@dupenodi.dev", handle: "hi@dupenodi.dev" },
+  { label: "GitHub", handle: "@dupenodi", href: "https://github.com/dupenodi" },
+  { label: "LinkedIn", handle: "sarath-donepudi", href: "https://linkedin.com/in/sarath-donepudi" },
+  { label: "Blog", handle: "reminiscence.bearblog.dev", href: "https://reminiscence.bearblog.dev" },
 ];
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
     try {
-      const res = await fetch("/api/contact", {
+      const r = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (res.ok) {
-        setStatus("sent");
-        setForm({ name: "", email: "", message: "" });
-      } else {
-        setStatus("error");
-      }
+      setStatus(r.ok ? "sent" : "error");
+      if (r.ok) setForm({ name: "", email: "", message: "" });
     } catch {
       setStatus("error");
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "0.625rem 0.875rem",
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 6,
+    color: "var(--ink)",
+    fontFamily: "var(--dm-sans), system-ui, sans-serif",
+    fontSize: "0.875rem",
+    outline: "none",
+    transition: "border-color 0.15s ease",
+  };
+
   return (
-    <section id="contact" className="py-32 md:py-40 px-6 relative overflow-hidden">
-      {/* Glows */}
-      <div className="absolute right-0 top-0 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute left-0 bottom-0 w-96 h-96 bg-cyan-500/8 rounded-full blur-[120px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="section-label mb-5"
-        >
-          // contact
-        </motion.p>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-none mb-6"
-        >
-          Let&apos;s build
-          <br />
-          <span className="gradient-text">something great.</span>
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.15 }}
-          className="text-slate-500 text-lg mb-16 max-w-xl"
-        >
-          Whether it&apos;s a collaboration, a project, or just a conversation — I&apos;m always
-          open. Drop a message below or reach out directly.
-        </motion.p>
-
-        <div className="grid md:grid-cols-2 gap-12 md:gap-20">
-          {/* Form */}
-          <motion.form
-            initial={{ opacity: 0, y: 30 }}
+    <section id="contact" style={{ borderBottom: "1px solid var(--border)" }}>
+      {/* Header */}
+      <div
+        style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: "1px solid var(--border)" }}
+        className="contact-header-grid"
+      >
+        <div style={{ padding: "2rem 2.5rem", borderRight: "1px solid var(--border)" }}>
+          <p className="label">Contact</p>
+        </div>
+        <div style={{ padding: "2rem 2.5rem" }}>
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-            onSubmit={handleSubmit}
-            className="space-y-5"
+            transition={{ duration: 0.55 }}
+            style={{
+              fontFamily: "var(--fraunces), Georgia, serif",
+              fontStyle: "italic",
+              fontWeight: 700,
+              fontSize: "clamp(1.8rem, 4vw, 3rem)",
+              color: "var(--ink)",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.15,
+            }}
           >
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-xs text-slate-500 mb-2 tracking-wide">Name</label>
-                <input
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder="Your name"
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.07] rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.05] transition-all duration-200"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-slate-500 mb-2 tracking-wide">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                  placeholder="your@email.com"
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.07] rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.05] transition-all duration-200"
-                />
-              </div>
-            </div>
+            Let&apos;s build something great together.
+          </motion.h2>
+        </div>
+      </div>
 
+      {/* Body */}
+      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr 1fr" }} className="contact-body-grid">
+        <div style={{ borderRight: "1px solid var(--border)" }} />
+
+        {/* Form */}
+        <motion.form
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          onSubmit={submit}
+          style={{
+            padding: "2.5rem 2.5rem 3rem",
+            borderRight: "1px solid var(--border)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.25rem",
+          }}
+        >
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <div>
-              <label className="block text-xs text-slate-500 mb-2 tracking-wide">Message</label>
-              <textarea
+              <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem", letterSpacing: "0.04em" }}>Name</label>
+              <input
+                type="text"
                 required
-                rows={6}
-                value={form.message}
-                onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-                placeholder="What's on your mind?"
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.07] rounded-xl text-white placeholder-slate-600 text-sm focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.05] transition-all duration-200 resize-none"
+                placeholder="Your name"
+                value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                style={inputStyle}
+                onFocus={e => (e.target.style.borderColor = "var(--accent)")}
+                onBlur={e => (e.target.style.borderColor = "var(--border)")}
               />
             </div>
-
-            <button
-              type="submit"
-              disabled={status === "sending" || status === "sent"}
-              className="w-full py-4 bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
-            >
-              {status === "sending"
-                ? "Sending..."
-                : status === "sent"
-                ? "Message sent ✓"
-                : status === "error"
-                ? "Failed — try email directly"
-                : "Send Message"}
-            </button>
-          </motion.form>
-
-          {/* Socials + info */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-            className="space-y-8"
-          >
             <div>
-              <p className="text-slate-500 text-sm mb-2">Or email me directly</p>
-              <a
-                href="mailto:hi@dupenodi.dev"
-                className="text-2xl font-display font-bold text-white hover:text-violet-300 transition-colors duration-200"
-              >
-                hi@dupenodi.dev
-              </a>
+              <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem", letterSpacing: "0.04em" }}>Email</label>
+              <input
+                type="email"
+                required
+                placeholder="your@email.com"
+                value={form.email}
+                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                style={inputStyle}
+                onFocus={e => (e.target.style.borderColor = "var(--accent)")}
+                onBlur={e => (e.target.style.borderColor = "var(--border)")}
+              />
             </div>
+          </div>
 
-            <div className="h-px bg-white/[0.05]" />
+          <div>
+            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--ink-soft)", marginBottom: "0.375rem", letterSpacing: "0.04em" }}>Message</label>
+            <textarea
+              required
+              rows={5}
+              placeholder="What's on your mind?"
+              value={form.message}
+              onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+              style={{ ...inputStyle, resize: "none" }}
+              onFocus={e => (e.target.style.borderColor = "var(--accent)")}
+              onBlur={e => (e.target.style.borderColor = "var(--border)")}
+            />
+          </div>
 
-            <div className="space-y-4">
-              <p className="text-xs text-slate-600 tracking-widest uppercase">Find me on</p>
+          <button
+            type="submit"
+            disabled={status === "sending" || status === "sent"}
+            className="btn-primary"
+            style={{ alignSelf: "flex-start", opacity: status === "sending" || status === "sent" ? 0.6 : 1 }}
+          >
+            {status === "sending" ? "Sending…" : status === "sent" ? "Sent ✓" : status === "error" ? "Failed — email me directly" : "Send Message"}
+          </button>
+        </motion.form>
+
+        {/* Info */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, delay: 0.1 }}
+          style={{ padding: "2.5rem 2.5rem 3rem", display: "flex", flexDirection: "column", gap: "2rem" }}
+        >
+          <div>
+            <p className="label" style={{ marginBottom: "0.5rem" }}>Email</p>
+            <a
+              href="mailto:hi@dupenodi.dev"
+              style={{
+                fontFamily: "var(--fraunces)",
+                fontWeight: 600,
+                fontSize: "1.125rem",
+                color: "var(--ink)",
+                textDecoration: "none",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--ink)")}
+            >
+              hi@dupenodi.dev
+            </a>
+          </div>
+
+          <div>
+            <p className="label" style={{ marginBottom: "0.875rem" }}>Elsewhere</p>
+            <div style={{ display: "flex", flexDirection: "column" }}>
               {socials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-between group py-3 border-b border-white/[0.04] hover:border-white/[0.1] transition-colors duration-200"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "0.75rem 0",
+                    borderBottom: "1px solid var(--border)",
+                    textDecoration: "none",
+                    transition: "color 0.12s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "var(--hover-bg)")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                 >
-                  <span className="text-slate-400 group-hover:text-white transition-colors text-sm font-medium">
-                    {s.label}
-                  </span>
-                  <div className="flex items-center gap-2 text-slate-600 group-hover:text-slate-300 transition-colors text-xs">
-                    <span>{s.handle}</span>
-                    <span className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200">
-                      ↗
-                    </span>
-                  </div>
+                  <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--ink-mid)" }}>{s.label}</span>
+                  <span style={{ fontSize: "0.75rem", color: "var(--ink-soft)" }}>{s.handle} ↗</span>
                 </a>
               ))}
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
 
       {/* Footer */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.4 }}
-        className="max-w-7xl mx-auto mt-24 pt-8 border-t border-white/[0.04] flex flex-wrap items-center justify-between gap-4"
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "200px 1fr",
+          borderTop: "1px solid var(--border)",
+        }}
+        className="footer-grid"
       >
-        <p className="text-slate-700 text-sm">
-          © 2025 Sarath Donepudi. Built with Next.js & Tailwind.
-        </p>
-        <p className="text-slate-700 text-sm">
-          Bengaluru, India
-        </p>
-      </motion.div>
+        <div style={{ borderRight: "1px solid var(--border)" }} />
+        <div
+          style={{
+            padding: "1.5rem 2.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "0.5rem",
+          }}
+        >
+          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>
+            © 2025 Sarath Donepudi
+          </p>
+          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>
+            Bengaluru, India
+          </p>
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .contact-header-grid { grid-template-columns: 1fr !important; }
+          .contact-header-grid > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
+          .contact-body-grid { grid-template-columns: 1fr !important; }
+          .contact-body-grid > div:first-child { display: none; }
+          .contact-body-grid > div { border-right: none !important; }
+          .footer-grid { grid-template-columns: 1fr !important; }
+          .footer-grid > div:first-child { display: none; }
+        }
+      `}</style>
     </section>
   );
 }

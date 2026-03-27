@@ -1,203 +1,239 @@
 "use client";
-import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  r: number;
-  color: string;
-}
-
-function useParticles(ref: React.RefObject<HTMLCanvasElement | null>) {
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animId: number;
-    const particles: Particle[] = [];
-    const COUNT = 90;
-    const COLORS = ["#8b5cf6", "#7c3aed", "#22d3ee", "#06b6d4"];
-    const CONNECT_DIST = 130;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    for (let i = 0; i < COUNT; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 1.5 + 0.5,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      });
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < CONNECT_DIST) {
-            const alpha = (1 - d / CONNECT_DIST) * 0.12;
-            ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      for (const p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + "55";
-        ctx.fill();
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-      }
-
-      animId = requestAnimationFrame(draw);
-    };
-
-    draw();
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animId);
-    };
-  }, [ref]);
-}
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } },
-};
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, delay },
+});
 
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useParticles(canvasRef);
-
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Particle canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        aria-hidden="true"
-      />
-
-      {/* Gradient orbs */}
-      <div className="absolute top-1/4 left-[10%] w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-[5%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
-
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-32 pb-20">
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="show"
-          className="max-w-5xl"
+    <section
+      id="home"
+      style={{
+        paddingTop: 56,
+        borderBottom: "1px solid var(--border)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+        }}
+        className="hero-grid"
+      >
+        {/* ── Left ─────────────────────────────── */}
+        <div
+          className="ruled-bg"
+          style={{
+            position: "relative",
+            padding: "4.5rem 3rem 5rem",
+            borderRight: "1px solid var(--border)",
+          }}
         >
-          {/* Availability badge */}
-          <motion.div variants={fadeUp} className="mb-8">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/20 bg-green-500/5 text-green-400 text-xs tracking-widest font-medium uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              Available for opportunities
-            </span>
-          </motion.div>
-
-          {/* Name */}
-          <motion.div variants={fadeUp} className="mb-6">
-            <h1 className="font-display font-black leading-[0.9] tracking-tighter select-none">
-              <span className="block text-white" style={{ fontSize: "clamp(72px, 14vw, 200px)" }}>
-                SARATH
-              </span>
-              <span
-                className="block gradient-text"
-                style={{ fontSize: "clamp(72px, 14vw, 200px)" }}
-              >
-                DONEPUDI
-              </span>
-            </h1>
-          </motion.div>
-
-          {/* Role */}
-          <motion.p
-            variants={fadeUp}
-            className="text-slate-400 text-lg md:text-xl font-light mb-2"
-          >
+          <motion.p {...fadeUp(0)} className="label" style={{ marginBottom: "1.5rem" }}>
             Full Stack AI Developer
-            <span className="mx-3 text-slate-700">·</span>
-            Founding Engineer{" "}
-            <span className="text-violet-400">@ Niti AI</span>
           </motion.p>
 
-          {/* Tagline */}
-          <motion.p
-            variants={fadeUp}
-            className="text-slate-500 text-sm md:text-base max-w-xl mb-12 leading-relaxed"
+          <motion.h1
+            {...fadeUp(0.1)}
+            style={{
+              fontFamily: "var(--fraunces), Georgia, serif",
+              fontWeight: 700,
+              fontStyle: "italic",
+              fontSize: "clamp(2.4rem, 5vw, 4rem)",
+              lineHeight: 1.12,
+              color: "var(--ink)",
+              letterSpacing: "-0.02em",
+              marginBottom: "1.5rem",
+              maxWidth: "22ch",
+            }}
           >
-            Building AI-first infrastructure — from sleek interfaces to robust backends,
-            LLM pipelines to agent architectures.
+            Building at the intersection of code and intelligence.
+          </motion.h1>
+
+          <motion.p
+            {...fadeUp(0.2)}
+            style={{
+              color: "var(--ink-mid)",
+              fontSize: "1rem",
+              lineHeight: 1.75,
+              maxWidth: "44ch",
+              marginBottom: "2.5rem",
+            }}
+          >
+            Founding engineer at Niti AI — shipping AI-first infrastructure across
+            the full stack. From Next.js interfaces to Python/Go backends, LLM
+            pipelines to agent architectures.
           </motion.p>
 
-          {/* CTAs */}
-          <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
-            <Link
-              href="#projects"
-              className="px-8 py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            >
+          <motion.div
+            {...fadeUp(0.3)}
+            style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}
+          >
+            <Link href="#projects" className="btn-primary">
               View Work
             </Link>
-            <Link
-              href="#contact"
-              className="px-8 py-3.5 border border-white/10 hover:border-white/25 text-white font-semibold rounded-full transition-all duration-200 backdrop-blur-sm hover:bg-white/5"
-            >
+            <Link href="#contact" className="btn-outline">
               Get in Touch
             </Link>
+          </motion.div>
+
+          {/* Bottom stats bar */}
+          <motion.div
+            {...fadeUp(0.45)}
+            style={{
+              display: "flex",
+              gap: "2.5rem",
+              marginTop: "4rem",
+              paddingTop: "1.5rem",
+              borderTop: "1px solid var(--border)",
+            }}
+            className="hero-stats"
+          >
+            {[
+              { value: "2+ yrs", label: "at Niti AI" },
+              { value: "0→1", label: "Founding eng." },
+              { value: "AI-first", label: "Full stack" },
+            ].map((s) => (
+              <div key={s.label}>
+                <p style={{ fontFamily: "var(--fraunces)", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)" }}>{s.value}</p>
+                <p style={{ fontSize: "0.75rem", color: "var(--ink-soft)" }}>{s.label}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* ── Right — profile card on dark bg ─── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          style={{
+            background: "var(--navy)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "3rem 2.5rem",
+            minHeight: "100%",
+          }}
+        >
+          {/* Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20, rotate: -2 }}
+            animate={{ opacity: 1, y: 0, rotate: -1.5 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            whileHover={{ rotate: 0, transition: { duration: 0.3 } }}
+            style={{
+              width: "100%",
+              maxWidth: 340,
+              background: "#FFFFFF",
+              borderRadius: 12,
+              overflow: "hidden",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.15), 0 24px 48px rgba(0,0,0,0.28)",
+            }}
+          >
+            {/* Card header */}
+            <div
+              style={{
+                background: "#2C2925",
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+                padding: "1.125rem 1.25rem",
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "var(--dm-sans), system-ui, sans-serif",
+                  fontSize: "0.625rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "#EAA898",
+                  marginBottom: "0.4rem",
+                }}
+              >
+                Next.js · Python · Go · LangChain
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--fraunces), Georgia, serif",
+                  fontStyle: "italic",
+                  fontSize: "0.875rem",
+                  color: "rgba(255,255,255,0.72)",
+                  lineHeight: 1.45,
+                }}
+              >
+                Ships across the stack. Thinks in systems. Builds for the long game.
+              </p>
+            </div>
+
+            {/* Card body */}
+            <div style={{ padding: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.875rem" }}>
+                <span style={{ fontFamily: "var(--dm-sans)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.08em", color: "#C05C42" }}>01</span>
+                <span style={{ fontFamily: "var(--fraunces)", fontSize: "0.9375rem", fontWeight: 600, color: "#1A1917" }}>Who Sharath Is</span>
+              </div>
+              <p style={{ fontSize: "0.8125rem", color: "#44403C", lineHeight: 1.65, marginBottom: "1rem" }}>
+                Founding engineer building AI-first retention infrastructure.
+                Works across every layer — from agent design to customer demos.
+              </p>
+              <blockquote
+                style={{
+                  borderLeft: "2px solid #C05C42",
+                  paddingLeft: "0.875rem",
+                  fontFamily: "var(--fraunces)",
+                  fontStyle: "italic",
+                  fontSize: "0.8125rem",
+                  color: "#44403C",
+                  lineHeight: 1.6,
+                }}
+              >
+                &ldquo;Being early means wearing every hat — building while listening, pitching while debugging.&rdquo;
+              </blockquote>
+            </div>
+
+            {/* Locked rows */}
+            <div style={{ borderTop: "1px solid #E6E1D9" }}>
+              {[
+                { n: "02", t: "Experience & Work" },
+                { n: "03", t: "Projects" },
+                { n: "04", t: "Get in Touch" },
+              ].map((row) => (
+                <div
+                  key={row.n}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.625rem",
+                    padding: "0.75rem 1.25rem",
+                    borderBottom: "1px solid #E6E1D9",
+                    opacity: 0.5,
+                  }}
+                >
+                  <span style={{ fontFamily: "var(--dm-sans)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", color: "#C05C42" }}>{row.n}</span>
+                  <span style={{ fontFamily: "var(--fraunces)", fontSize: "0.875rem", color: "#44403C", flex: 1 }}>{row.t}</span>
+                  <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+                    <rect x="1" y="5" width="8" height="7" rx="1.5" stroke="#78716C" strokeWidth="1.25"/>
+                    <path d="M3 5V3.5a2 2 0 1 1 4 0V5" stroke="#78716C" strokeWidth="1.25" strokeLinecap="round"/>
+                  </svg>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-xs text-slate-600 tracking-widest uppercase">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          className="w-5 h-8 border border-white/15 rounded-full flex items-start justify-center p-1.5"
-        >
-          <div className="w-1 h-2 bg-violet-400/50 rounded-full" />
-        </motion.div>
-      </motion.div>
+      <style>{`
+        @media (max-width: 768px) {
+          .hero-grid { grid-template-columns: 1fr !important; }
+          .hero-stats { gap: 1.5rem !important; }
+        }
+      `}</style>
     </section>
   );
 }

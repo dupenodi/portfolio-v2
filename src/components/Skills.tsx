@@ -1,94 +1,104 @@
 "use client";
 import { motion } from "framer-motion";
 
-const skillGroups = [
+const groups = [
   {
     category: "Frontend",
-    color: "#8b5cf6",
-    skills: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"],
+    skills: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion"],
   },
   {
     category: "Backend",
-    color: "#22d3ee",
     skills: ["Python", "Go", "FastAPI", "Node.js", "REST APIs", "WebSockets"],
   },
   {
     category: "AI & LLMs",
-    color: "#a78bfa",
-    skills: ["LangChain", "OpenAI API", "Vector DBs", "Pinecone", "RAG", "Prompt Engineering", "Agent Architectures"],
+    skills: ["LangChain", "OpenAI API", "Vector DBs", "Pinecone", "RAG", "Agent Design"],
   },
   {
     category: "Data & Infra",
-    color: "#06b6d4",
-    skills: ["PostgreSQL", "Supabase", "Redis", "Docker", "Vercel", "Git", "CI/CD"],
+    skills: ["PostgreSQL", "Supabase", "Redis", "Docker", "Vercel", "Git"],
   },
 ];
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-32 md:py-40 px-6 relative overflow-hidden">
-      <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/5 rounded-full blur-[150px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="section-label mb-5"
-        >
-          // skills_&_tools
-        </motion.p>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="font-display font-bold text-4xl md:text-6xl tracking-tight mb-16"
-        >
-          My{" "}
-          <span className="gradient-text">toolkit.</span>
-        </motion.h2>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {skillGroups.map((group, gi) => (
-            <motion.div
-              key={group.category}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: gi * 0.08, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-              className="glass rounded-2xl p-6 hover:border-white/[0.1] transition-colors duration-300"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className="w-2 h-6 rounded-full"
-                  style={{ background: group.color }}
-                />
-                <p className="font-display font-semibold text-white text-sm tracking-wide">
-                  {group.category}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {group.skills.map((skill, si) => (
-                  <motion.span
-                    key={skill}
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: gi * 0.06 + si * 0.04 }}
-                    className="px-3 py-1.5 text-xs text-slate-400 rounded-full border border-white/[0.06] bg-white/[0.03] hover:border-white/[0.15] hover:text-slate-200 transition-all duration-200"
-                    style={{ "--accent": group.color } as React.CSSProperties}
-                  >
-                    {skill}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+    <section id="skills" style={{ borderBottom: "1px solid var(--border)" }}>
+      {/* Header */}
+      <div
+        style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: "1px solid var(--border)" }}
+        className="skills-header-grid"
+      >
+        <div style={{ padding: "2rem 2.5rem", borderRight: "1px solid var(--border)" }}>
+          <p className="label">Skills</p>
+        </div>
+        <div style={{ padding: "2rem 2.5rem" }}>
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            style={{
+              fontFamily: "var(--fraunces), Georgia, serif",
+              fontStyle: "italic",
+              fontWeight: 700,
+              fontSize: "clamp(1.4rem, 3vw, 2.25rem)",
+              color: "var(--ink)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            My toolkit.
+          </motion.h2>
         </div>
       </div>
+
+      {/* Skills grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr 1fr 1fr 1fr" }} className="skills-body-grid">
+        <div style={{ borderRight: "1px solid var(--border)" }} />
+        {groups.map((g, gi) => (
+          <motion.div
+            key={g.category}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: gi * 0.07 }}
+            style={{
+              padding: "2.5rem 2rem 3rem",
+              borderRight: gi < groups.length - 1 ? "1px solid var(--border)" : "none",
+            }}
+          >
+            <p className="label" style={{ marginBottom: "1.25rem" }}>{g.category}</p>
+            <ul style={{ display: "flex", flexDirection: "column", gap: "0.625rem", listStyle: "none" }}>
+              {g.skills.map((s) => (
+                <li
+                  key={s}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    fontSize: "0.875rem",
+                    color: "var(--ink-mid)",
+                  }}
+                >
+                  <span style={{ color: "var(--accent)", fontSize: "0.6rem" }}>●</span>
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        ))}
+      </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .skills-header-grid { grid-template-columns: 1fr !important; }
+          .skills-header-grid > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
+          .skills-body-grid { grid-template-columns: 1fr 1fr !important; }
+          .skills-body-grid > div:first-child { display: none; }
+        }
+        @media (max-width: 520px) {
+          .skills-body-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 }
