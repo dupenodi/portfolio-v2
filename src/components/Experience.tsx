@@ -13,7 +13,7 @@ export default function Experience() {
     <section id="experience" style={{ borderBottom: "1px solid var(--border)", padding: "5rem 3rem" }} className="exp-section">
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
-        <motion.p {...inView(0)} className="label" style={{ marginBottom: "3rem" }}>
+        <motion.p {...inView(0)} className="label" style={{ marginBottom: "0.75rem" }}>
           Experience
         </motion.p>
 
@@ -26,7 +26,7 @@ export default function Experience() {
             fontSize: "clamp(1.6rem, 3vw, 2.25rem)",
             color: "var(--ink)",
             letterSpacing: "-0.02em",
-            marginBottom: "3.5rem",
+            marginBottom: "3rem",
           }}
         >
           Where I&apos;ve worked &amp; learned.

@@ -75,15 +75,6 @@ h1, h2, h3, h4 {
   color: var(--accent);
 }
 
-.ruled-bg {
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent,
-    transparent 79px,
-    var(--border) 79px,
-    var(--border) 80px
-  );
-}
 
 .card {
   background: var(--surface);

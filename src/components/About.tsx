@@ -14,12 +14,12 @@ export default function About() {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Section label */}
-        <motion.p {...inView(0)} className="label" style={{ marginBottom: "3rem" }}>
+        <motion.p {...inView(0)} className="label" style={{ marginBottom: "0.75rem" }}>
           About
         </motion.p>
 
         {/* Two column: quote + bio */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "start" }} className="about-grid">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "start", marginTop: "3rem" }} className="about-grid">
 
           {/* Left — big statement */}
           <motion.div {...inView(0.1)}>
@@ -28,7 +28,7 @@ export default function About() {
                 fontFamily: "var(--fraunces), Georgia, serif",
                 fontStyle: "italic",
                 fontWeight: 700,
-                fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                fontSize: "clamp(1.6rem, 3vw, 2.25rem)",
                 color: "var(--ink)",
                 lineHeight: 1.2,
                 letterSpacing: "-0.02em",

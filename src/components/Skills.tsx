@@ -14,7 +14,7 @@ export default function Skills() {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <motion.p
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
@@ -36,7 +36,7 @@ export default function Skills() {
             fontSize: "clamp(1.6rem, 3vw, 2.25rem)",
             color: "var(--ink)",
             letterSpacing: "-0.02em",
-            marginBottom: "3.5rem",
+            marginBottom: "3rem",
           }}
         >
           My toolkit.

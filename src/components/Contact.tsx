@@ -51,26 +51,25 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="label"
-          style={{ marginBottom: "1.5rem" }}
+          style={{ marginBottom: "0.75rem" }}
         >
           Contact
         </motion.p>
 
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.05 }}
+          transition={{ duration: 0.55, delay: 0.05 }}
           style={{
             fontFamily: "var(--fraunces), Georgia, serif",
             fontStyle: "italic",
             fontWeight: 700,
-            fontSize: "clamp(2rem, 4.5vw, 3.5rem)",
+            fontSize: "clamp(1.6rem, 3vw, 2.25rem)",
             color: "var(--ink)",
             letterSpacing: "-0.02em",
-            lineHeight: 1.15,
-            marginBottom: "4rem",
-            maxWidth: "22ch",
+            lineHeight: 1.2,
+            marginBottom: "3rem",
           }}
         >
           Let&apos;s build something great together.
