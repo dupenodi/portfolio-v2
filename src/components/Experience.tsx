@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 
 const inView = (delay = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -29,7 +30,7 @@ export default function Experience() {
             marginBottom: "3rem",
           }}
         >
-          Where I&apos;ve worked &amp; learned.
+          Where I work.
         </motion.h2>
 
         {/* Niti AI */}
@@ -46,9 +47,16 @@ export default function Experience() {
           <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "3rem" }} className="exp-row-grid">
             {/* Left — company meta */}
             <div>
-              <p style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.125rem", color: "var(--ink)", marginBottom: "0.25rem" }}>
-                Niti AI
-              </p>
+              <a
+                href="https://niti.ai"
+                target="_blank"
+                rel="noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.125rem", color: "var(--ink)", marginBottom: "0.25rem", textDecoration: "none" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--ink)")}
+              >
+                Niti AI <ExternalLink size={14} />
+              </a>
               <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", marginBottom: "0.75rem" }}>Aug 2023 — Present · 2 yrs+</p>
               <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>Bengaluru, India</p>
               <div style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", marginTop: "0.875rem", padding: "0.25rem 0.625rem", background: "rgba(74,124,107,0.1)", border: "1px solid rgba(74,124,107,0.2)", borderRadius: 20 }}>
@@ -88,24 +96,6 @@ export default function Experience() {
           </div>
         </motion.div>
 
-        {/* Education */}
-        <motion.div {...inView(0.2)}>
-          <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "3rem" }} className="exp-row-grid">
-            <div>
-              <p style={{ fontFamily: "var(--fraunces)", fontWeight: 700, fontSize: "1.125rem", color: "var(--ink)", marginBottom: "0.25rem" }}>
-                SSN College of Engineering
-              </p>
-              <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>2020 — 2024</p>
-              <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", marginTop: "0.25rem" }}>Chennai, India</p>
-            </div>
-            <div>
-              <p className="label" style={{ marginBottom: "0.5rem" }}>Education</p>
-              <p style={{ fontFamily: "var(--fraunces)", fontStyle: "italic", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)" }}>
-                Bachelor of Engineering — Computer Science
-              </p>
-            </div>
-          </div>
-        </motion.div>
 
       </div>
 

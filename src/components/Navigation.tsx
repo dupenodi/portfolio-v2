@@ -2,16 +2,28 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const links = [
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
+const navLinks = [
+  { label: "About", href: "/#about" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Blog", href: "/#blog" },
+  { label: "Now", href: "/now" },
+  { label: "Bookmarks", href: "/bookmarks" },
 ];
 
+const linkStyle = {
+  fontFamily: "var(--dm-sans), system-ui, sans-serif",
+  fontSize: "0.8125rem",
+  fontWeight: 500,
+  color: "var(--ink-mid)",
+  textDecoration: "none",
+  padding: "0.375rem 0.75rem",
+  borderRadius: 4,
+  transition: "color 0.12s, background 0.12s",
+  whiteSpace: "nowrap" as const,
+};
+
 function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(true);
 
   useEffect(() => {
     setDark(document.documentElement.classList.contains("dark"));
@@ -28,28 +40,9 @@ function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label="Toggle theme"
-      style={{
-        width: 36,
-        height: 36,
-        borderRadius: 6,
-        border: "1px solid var(--border)",
-        background: "transparent",
-        color: "var(--ink-mid)",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        transition: "background 0.15s, color 0.15s",
-        fontSize: "1rem",
-      }}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLButtonElement).style.background = "var(--hover-bg)";
-        (e.currentTarget as HTMLButtonElement).style.color = "var(--ink)";
-      }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-        (e.currentTarget as HTMLButtonElement).style.color = "var(--ink-mid)";
-      }}
+      style={{ width: 36, height: 36, borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--ink-mid)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.15s, color 0.15s", fontSize: "1rem" }}
+      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--hover-bg)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ink)"; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ink-mid)"; }}
     >
       {dark ? "☀︎" : "◑"}
     </button>
@@ -61,73 +54,21 @@ export default function Navigation() {
 
   return (
     <>
-      <header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 56,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 2.5rem",
-          background: "var(--parchment)",
-          borderBottom: "1px solid var(--border)",
-          zIndex: 100,
-          transition: "background 0.25s ease",
-        }}
-      >
+      <header style={{ position: "fixed", top: 0, left: 0, right: 0, height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2.5rem", background: "var(--parchment)", borderBottom: "1px solid var(--border)", zIndex: 100, transition: "background 0.25s ease" }}>
         {/* Logo */}
-        <Link
-          href="#"
-          style={{
-            fontFamily: "var(--fraunces), Georgia, serif",
-            fontWeight: 700,
-            fontSize: "1rem",
-            color: "var(--ink)",
-            textDecoration: "none",
-            letterSpacing: "-0.01em",
-          }}
-        >
+        <Link href="/" style={{ fontFamily: "var(--fraunces), Georgia, serif", fontWeight: 700, fontSize: "1rem", color: "var(--ink)", textDecoration: "none", letterSpacing: "-0.01em" }}>
           Sarath Donepudi
         </Link>
 
         {/* Center links */}
-        <nav
-          style={{
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.125rem",
-          }}
-          className="hidden-mobile"
-        >
-          {links.map((l) => (
+        <nav style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "0.125rem" }} className="hidden-mobile">
+          {navLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              style={{
-                fontFamily: "var(--dm-sans), system-ui, sans-serif",
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                color: "var(--ink-mid)",
-                textDecoration: "none",
-                padding: "0.375rem 0.75rem",
-                borderRadius: 4,
-                transition: "color 0.12s, background 0.12s",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink)";
-                (e.currentTarget as HTMLAnchorElement).style.background = "var(--hover-bg)";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-mid)";
-                (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-              }}
+              style={linkStyle}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink)"; (e.currentTarget as HTMLAnchorElement).style.background = "var(--hover-bg)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-mid)"; (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; }}
             >
               {l.label}
             </Link>
@@ -137,27 +78,18 @@ export default function Navigation() {
         {/* Right */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <ThemeToggle />
-          <Link href="#contact" className="btn-primary" style={{ fontSize: "0.8125rem", padding: "0.375rem 0.875rem" }}>
-            Hire Me
+          <a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn-outline hidden-mobile" style={{ fontSize: "0.8125rem", padding: "0.375rem 0.875rem" }}>
+            Resume
+          </a>
+          <Link href="/#contact" className="btn-primary hidden-mobile" style={{ fontSize: "0.8125rem", padding: "0.375rem 0.875rem" }}>
+            Let&apos;s talk
           </Link>
           {/* Hamburger */}
           <button
             onClick={() => setOpen(!open)}
             aria-label="Menu"
             className="show-mobile"
-            style={{
-              display: "none",
-              flexDirection: "column",
-              justifyContent: "center",
-              gap: 5,
-              width: 36,
-              height: 36,
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 4,
-              borderRadius: 6,
-            }}
+            style={{ display: "none", flexDirection: "column", justifyContent: "center", gap: 5, width: 36, height: 36, background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: 6 }}
           >
             <span style={{ display: "block", height: 1.5, background: "var(--ink)", borderRadius: 2, width: 20, transition: "transform 0.2s", transform: open ? "translateY(6.5px) rotate(45deg)" : "none" }} />
             <span style={{ display: "block", height: 1.5, background: "var(--ink)", borderRadius: 2, width: 20, transition: "opacity 0.2s", opacity: open ? 0 : 1 }} />
@@ -168,33 +100,13 @@ export default function Navigation() {
 
       {/* Mobile drawer */}
       {open && (
-        <div
-          style={{
-            position: "fixed",
-            top: 56,
-            left: 0,
-            right: 0,
-            background: "var(--parchment)",
-            borderBottom: "1px solid var(--border)",
-            zIndex: 99,
-            padding: "0.75rem 1.5rem 1.5rem",
-          }}
-        >
-          {links.map((l) => (
+        <div style={{ position: "fixed", top: 56, left: 0, right: 0, background: "var(--parchment)", borderBottom: "1px solid var(--border)", zIndex: 99, padding: "0.75rem 1.5rem 1.5rem" }}>
+          {navLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              style={{
-                display: "block",
-                fontFamily: "var(--dm-sans), system-ui, sans-serif",
-                fontSize: "1rem",
-                fontWeight: 500,
-                color: "var(--ink-mid)",
-                textDecoration: "none",
-                padding: "0.75rem 0.875rem",
-                borderRadius: 6,
-              }}
+              style={{ display: "block", fontFamily: "var(--dm-sans), system-ui, sans-serif", fontSize: "1rem", fontWeight: 500, color: "var(--ink-mid)", textDecoration: "none", padding: "0.75rem 0.875rem", borderRadius: 6 }}
             >
               {l.label}
             </Link>

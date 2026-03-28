@@ -1,13 +1,28 @@
 "use client";
 import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import type { BlogPost } from "@/lib/blog-feed";
 
-const posts = [
-  { title: "Building in public: lessons from shipping at a startup", tag: "Startups" },
-  { title: "Why I write: documenting thought as a developer", tag: "Writing" },
-  { title: "The human side of building AI products", tag: "AI" },
+const BLOG_URL = "https://reminiscence.bearblog.dev";
+
+const fallbackPosts: BlogPost[] = [
+  { title: "Building in public: lessons from shipping at a startup", link: BLOG_URL, pubDate: "", description: "" },
+  { title: "Why I write: documenting thought as a developer", link: BLOG_URL, pubDate: "", description: "" },
+  { title: "The human side of building AI products", link: BLOG_URL, pubDate: "", description: "" },
 ];
 
-export default function Blog() {
+function formatDate(dateStr: string) {
+  if (!dateStr) return "";
+  try {
+    return new Date(dateStr).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  } catch {
+    return "";
+  }
+}
+
+export default function Blog({ posts }: { posts: BlogPost[] }) {
+  const items = posts.length > 0 ? posts : fallbackPosts;
+
   return (
     <section id="blog" style={{ borderBottom: "1px solid var(--border)", padding: "5rem 3rem" }} className="blog-section">
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -41,15 +56,15 @@ export default function Blog() {
               Thoughts &amp; words.
             </motion.h2>
           </div>
-          <a href="https://reminiscence.bearblog.dev" target="_blank" rel="noreferrer"
-            style={{ fontSize: "0.8125rem", color: "var(--accent)", textDecoration: "none" }}>
-            Read all posts ↗
+          <a href={BLOG_URL} target="_blank" rel="noreferrer"
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", fontSize: "0.8125rem", color: "var(--accent)", textDecoration: "none" }}>
+            Read all posts <ArrowUpRight size={13} />
           </a>
         </div>
 
-        {/* Featured blog link */}
+        {/* Featured blog card */}
         <motion.a
-          href="https://reminiscence.bearblog.dev"
+          href={BLOG_URL}
           target="_blank"
           rel="noreferrer"
           initial={{ opacity: 0, y: 16 }}
@@ -62,7 +77,7 @@ export default function Blog() {
             border: "1px solid var(--border)",
             borderRadius: 10,
             textDecoration: "none",
-            marginBottom: "1px",
+            marginBottom: "2rem",
             transition: "background 0.15s, border-color 0.15s",
             background: "var(--surface)",
           }}
@@ -76,15 +91,17 @@ export default function Blog() {
           <p style={{ color: "var(--ink-mid)", fontSize: "0.9rem", maxWidth: "52ch", lineHeight: 1.75, marginBottom: "1.25rem" }}>
             Personal essays and notes from the intersection of technology, travel, and reflection.
           </p>
-          <p style={{ color: "var(--accent)", fontSize: "0.8125rem" }}>reminiscence.bearblog.dev ↗</p>
+          <p style={{ display: "flex", alignItems: "center", gap: "0.25rem", color: "var(--accent)", fontSize: "0.8125rem" }}>
+            reminiscence.bearblog.dev <ArrowUpRight size={13} />
+          </p>
         </motion.a>
 
         {/* Post list */}
-        <div style={{ borderTop: "1px solid var(--border)" }}>
-          {posts.map((post, i) => (
+        <div>
+          {items.map((post, i) => (
             <motion.a
               key={post.title}
-              href="https://reminiscence.bearblog.dev"
+              href={post.link || BLOG_URL}
               target="_blank"
               rel="noreferrer"
               initial={{ opacity: 0, y: 16 }}
@@ -95,24 +112,26 @@ export default function Blog() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                padding: "1.25rem 0",
+                padding: "1rem 0.5rem",
+                borderTop: i === 0 ? "1px solid var(--border)" : "none",
                 borderBottom: "1px solid var(--border)",
                 textDecoration: "none",
                 gap: "1rem",
                 transition: "background 0.12s",
+                borderRadius: 4,
               }}
               onMouseEnter={e => (e.currentTarget.style.background = "var(--hover-bg)")}
               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-                <span style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--accent)", flexShrink: 0 }}>
-                  {post.tag}
-                </span>
-                <p style={{ fontFamily: "var(--fraunces)", fontSize: "0.9375rem", color: "var(--ink)", lineHeight: 1.4 }}>
-                  {post.title}
-                </p>
+              <p style={{ fontFamily: "var(--fraunces)", fontSize: "0.9375rem", color: "var(--ink)", lineHeight: 1.4 }}>
+                {post.title}
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
+                {post.pubDate && (
+                  <span style={{ fontSize: "0.75rem", color: "var(--ink-soft)" }}>{formatDate(post.pubDate)}</span>
+                )}
+                <ArrowUpRight size={15} style={{ color: "var(--ink-soft)" }} />
               </div>
-              <span style={{ color: "var(--ink-soft)", flexShrink: 0 }}>↗</span>
             </motion.a>
           ))}
         </div>

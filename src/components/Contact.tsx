@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 
 const socials = [
-  { label: "GitHub", handle: "@dupenodi", href: "https://github.com/dupenodi" },
-  { label: "LinkedIn", handle: "sarath-donepudi", href: "https://linkedin.com/in/sarath-donepudi" },
-  { label: "Blog", handle: "reminiscence.bearblog.dev", href: "https://reminiscence.bearblog.dev" },
+  { label: "GitHub", handle: "@dupenodi", href: "https://github.com/dupenodi", icon: <ExternalLink size={13} /> },
+  { label: "LinkedIn", handle: "sarath-donepudi", href: "https://linkedin.com/in/sarath-donepudi", icon: <ExternalLink size={13} /> },
+  { label: "Blog", handle: "reminiscence.bearblog.dev", href: "https://reminiscence.bearblog.dev", icon: <ArrowUpRight size={13} /> },
 ];
 
 export default function Contact() {
@@ -172,7 +173,7 @@ export default function Contact() {
                   onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                 >
                   <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--ink-mid)" }}>{s.label}</span>
-                  <span style={{ fontSize: "0.75rem", color: "var(--ink-soft)" }}>{s.handle} ↗</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", fontSize: "0.75rem", color: "var(--ink-soft)" }}>{s.handle} {s.icon}</span>
                 </a>
               ))}
             </div>
@@ -182,7 +183,12 @@ export default function Contact() {
         {/* Footer */}
         <div style={{ marginTop: "4rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
           <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>© 2025 Sarath Donepudi</p>
-          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>Bengaluru, India</p>
+          <div style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
+            <a href="/now" style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", textDecoration: "none" }} onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")} onMouseLeave={e => (e.currentTarget.style.color = "var(--ink-soft)")}>Now</a>
+            <a href="/uses" style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", textDecoration: "none" }} onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")} onMouseLeave={e => (e.currentTarget.style.color = "var(--ink-soft)")}>Uses</a>
+            <a href="/bookmarks" style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", textDecoration: "none" }} onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")} onMouseLeave={e => (e.currentTarget.style.color = "var(--ink-soft)")}>Bookmarks</a>
+            <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>Bengaluru, India</p>
+          </div>
         </div>
       </div>
 

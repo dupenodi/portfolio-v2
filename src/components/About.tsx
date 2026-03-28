@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 
 const inView = (delay = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -35,38 +36,39 @@ export default function About() {
                 marginBottom: "2rem",
               }}
             >
-              Building at the frontier — where the code ends and the product begins.
+              I write code, ship products, and wear every hat in between.
             </h2>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem", marginBottom: "2rem" }}>
               {[
-                { label: "Based in", value: "Bengaluru, India" },
-                { label: "Currently", value: "Founding Engineer @ Niti AI" },
-                { label: "Education", value: "BE Computer Science, SSN College" },
+                "Full stack across frontend, backend, and infra",
+                "LLM pipelines, RAG, and agent architectures",
+                "Shipping fast in early-stage startup environments",
+                "Turning vague ideas into working products",
               ].map((item) => (
-                <div key={item.label} style={{ display: "flex", gap: "1rem", paddingBottom: "0.75rem", borderBottom: "1px solid var(--border)", alignItems: "baseline" }}>
-                  <span style={{ fontFamily: "var(--dm-sans)", fontSize: "0.75rem", color: "var(--ink-soft)", width: 80, flexShrink: 0 }}>{item.label}</span>
-                  <span style={{ fontSize: "0.875rem", color: "var(--ink-mid)" }}>{item.value}</span>
+                <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem", fontSize: "0.875rem", color: "var(--ink-mid)", lineHeight: 1.6 }}>
+                  <span style={{ color: "var(--accent)", flexShrink: 0, marginTop: "0.3em", fontSize: "0.5rem" }}>●</span>
+                  {item}
                 </div>
               ))}
             </div>
 
-            <div style={{ display: "flex", gap: "1.25rem", marginTop: "1.75rem", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "1.25rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
               {[
-                { label: "GitHub ↗", href: "https://github.com/dupenodi" },
-                { label: "LinkedIn ↗", href: "https://linkedin.com/in/sarath-donepudi" },
-                { label: "Blog ↗", href: "https://reminiscence.bearblog.dev" },
+                { label: "GitHub", href: "https://github.com/dupenodi", icon: <ExternalLink size={13} /> },
+                { label: "LinkedIn", href: "https://linkedin.com/in/sarath-donepudi", icon: <ExternalLink size={13} /> },
+                { label: "Blog", href: "https://reminiscence.bearblog.dev", icon: <ArrowUpRight size={13} /> },
               ].map((l) => (
                 <a
                   key={l.label}
                   href={l.href}
                   target="_blank"
                   rel="noreferrer"
-                  style={{ fontSize: "0.875rem", color: "var(--accent)", textDecoration: "none" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.875rem", color: "var(--accent)", textDecoration: "none" }}
                   onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
                   onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
                 >
-                  {l.label}
+                  {l.icon}{l.label}
                 </a>
               ))}
             </div>
@@ -76,14 +78,15 @@ export default function About() {
           <motion.div {...inView(0.2)} style={{ display: "flex", flexDirection: "column", gap: "1.125rem" }}>
             <p style={{ color: "var(--ink-mid)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
               I&apos;m Sharath — a full stack AI developer and founding engineer at{" "}
-              <strong style={{ color: "var(--ink)", fontWeight: 600 }}>Niti AI</strong>,
-              building AI-first infrastructure to power the future of retention marketing.
-            </p>
-            <p style={{ color: "var(--ink-mid)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
-              I work across the entire stack — sleek interfaces in Next.js and React,
-              robust backends in Python and Go, and LLM integration via LangChain,
-              OpenAI, and vector databases for audience targeting, campaign generation,
-              and agent orchestration.
+              <a
+                href="https://niti.ai"
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}
+              >
+                Niti AI
+              </a>
+              , building AI-first infrastructure to power the future of retention marketing.
             </p>
             <p style={{ color: "var(--ink-mid)", lineHeight: 1.8, fontSize: "0.9375rem" }}>
               Being early means wearing every hat — building while listening, pitching

@@ -4,9 +4,17 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ── Font theme ─────────────────────────────────────────── */
+/* --display and --body are injected by layout.tsx via next/font variables  */
+/* Change which font is active there, and it automatically flows through here */
 @theme inline {
-  --font-display: var(--fraunces), Georgia, serif;
-  --font-sans: var(--dm-sans), system-ui, sans-serif;
+  --font-display: var(--display), Georgia, serif;
+  --font-sans: var(--body), system-ui, sans-serif;
+}
+
+/* legacy aliases so inline styles using var(--fraunces) / var(--dm-sans) still work */
+:root {
+  --fraunces: var(--display);
+  --dm-sans: var(--body);
 }
 
 /* ── Design tokens ──────────────────────────────────────── */
