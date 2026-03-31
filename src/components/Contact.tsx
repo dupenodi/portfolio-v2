@@ -182,7 +182,7 @@ export default function Contact() {
 
         {/* Footer */}
         <div style={{ marginTop: "4rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>© 2025 Sarath Donepudi</p>
+          <p style={{ fontSize: "0.8125rem", color: "var(--ink-soft)" }}>© 2025 Sharath</p>
           <div style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
             <a href="/now" style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", textDecoration: "none" }} onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")} onMouseLeave={e => (e.currentTarget.style.color = "var(--ink-soft)")}>Now</a>
             <a href="/uses" style={{ fontSize: "0.8125rem", color: "var(--ink-soft)", textDecoration: "none" }} onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")} onMouseLeave={e => (e.currentTarget.style.color = "var(--ink-soft)")}>Uses</a>

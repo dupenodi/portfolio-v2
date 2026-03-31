@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Sarath Donepudi — Full Stack AI Developer";
+export const alt = "Sharath Donepudi — Full Stack AI Developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -31,10 +31,7 @@ export default function OGImage() {
         {/* Middle */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <div style={{ fontSize: 96, fontWeight: 900, fontStyle: "italic", color: "#1A1917", lineHeight: 0.9, letterSpacing: "-0.03em" }}>
-            Sarath
-          </div>
-          <div style={{ fontSize: 96, fontWeight: 900, fontStyle: "italic", color: "#1A1917", lineHeight: 0.9, letterSpacing: "-0.03em" }}>
-            Donepudi.
+            Sharath.
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "24px" }}>
             <span style={{ fontSize: 22, color: "#44403C", fontFamily: "system-ui, sans-serif" }}>Full Stack AI Developer</span>

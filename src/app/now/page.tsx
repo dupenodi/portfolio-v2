@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Now — Sarath Donepudi",
-  description: "What Sarath is up to right now.",
+  title: "Now — Sharath",
+  description: "What Sharath is up to right now.",
 };
 
 const updated = "March 2026";

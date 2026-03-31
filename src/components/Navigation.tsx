@@ -57,7 +57,7 @@ export default function Navigation() {
       <header style={{ position: "fixed", top: 0, left: 0, right: 0, height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2.5rem", background: "var(--parchment)", borderBottom: "1px solid var(--border)", zIndex: 100, transition: "background 0.25s ease" }}>
         {/* Logo */}
         <Link href="/" style={{ fontFamily: "var(--fraunces), Georgia, serif", fontWeight: 700, fontSize: "1rem", color: "var(--ink)", textDecoration: "none", letterSpacing: "-0.01em" }}>
-          Sarath Donepudi
+          Sharath
         </Link>
 
         {/* Center links */}

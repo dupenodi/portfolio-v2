@@ -4,7 +4,7 @@ import { getBookmarks } from "@/lib/raindrop";
 import type { Bookmark } from "@/lib/raindrop";
 
 export const metadata: Metadata = {
-  title: "Bookmarks — Sarath Donepudi",
+  title: "Bookmarks — Sharath",
   description: "Links I've found worth saving.",
 };
 

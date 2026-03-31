@@ -101,21 +101,21 @@ const libreBaskerville = Libre_Baskerville({
 void cormorant, dmSerifDisplay, instrumentSerif, playfair, inter, libreBaskerville;
 
 export const metadata: Metadata = {
-  title: "Sarath Donepudi — Full Stack AI Developer",
+  title: "Sharath Donepudi — Full Stack AI Developer",
   description: "Founding Engineer at Niti AI. Building AI-first infrastructure — LLM pipelines, agent architectures, and everything in between.",
-  authors: [{ name: "Sarath Donepudi" }],
+  authors: [{ name: "Sharath Donepudi" }],
   metadataBase: new URL("https://dupenodi.dev"),
   openGraph: {
-    title: "Sarath Donepudi — Full Stack AI Developer",
+    title: "Sharath Donepudi — Full Stack AI Developer",
     description: "Founding Engineer at Niti AI. Building AI-first infrastructure — LLM pipelines, agent architectures, and everything in between.",
     url: "https://dupenodi.dev",
-    siteName: "Sarath Donepudi",
+    siteName: "Sharath Donepudi",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sarath Donepudi — Full Stack AI Developer",
+    title: "Sharath Donepudi — Full Stack AI Developer",
     description: "Founding Engineer at Niti AI. Building AI-first infrastructure — LLM pipelines, agent architectures, and everything in between.",
   },
 };

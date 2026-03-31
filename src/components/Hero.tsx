@@ -47,11 +47,27 @@ export default function Hero() {
             lineHeight: 0.92,
             color: "var(--ink)",
             letterSpacing: "-0.03em",
+            marginBottom: "1rem",
+          }}
+        >
+          Sharath.
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          style={{
+            fontFamily: "var(--dm-sans), system-ui, sans-serif",
+            fontStyle: "normal",
+            fontSize: "0.8125rem",
+            color: "var(--ink-soft)",
+            letterSpacing: "0.08em",
             marginBottom: "2.5rem",
           }}
         >
-          Sarath<br />Donepudi.
-        </motion.h1>
+          / sha · rath /
+        </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
