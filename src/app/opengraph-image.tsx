@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getAvailableForOpportunities } from "@/lib/available-for-opportunities";
 
 export const runtime = "edge";
 export const alt = "Sharath Donepudi — Full Stack AI Developer";
@@ -6,6 +7,8 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OGImage() {
+  const showAvailability = getAvailableForOpportunities();
+
   return new ImageResponse(
     (
       <div
@@ -21,12 +24,16 @@ export default function OGImage() {
         }}
       >
         {/* Top */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4A7C6B" }} />
-          <span style={{ fontSize: 16, color: "#78716C", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "system-ui, sans-serif" }}>
-            Available for opportunities
-          </span>
-        </div>
+        {showAvailability ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4A7C6B" }} />
+            <span style={{ fontSize: 16, color: "#78716C", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "system-ui, sans-serif" }}>
+              Available for opportunities
+            </span>
+          </div>
+        ) : (
+          <div />
+        )}
 
         {/* Middle */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>

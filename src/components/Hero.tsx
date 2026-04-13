@@ -2,7 +2,11 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-export default function Hero() {
+type HeroProps = {
+  availableForOpportunities?: boolean;
+};
+
+export default function Hero({ availableForOpportunities = true }: HeroProps) {
   return (
     <section
       id="home"
@@ -23,17 +27,19 @@ export default function Hero() {
         }}
         className="hero-inner"
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "2.5rem" }}
-        >
-          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4A7C6B", display: "inline-block" }} />
-          <span style={{ fontFamily: "var(--dm-sans)", fontSize: "0.8rem", color: "var(--ink-soft)" }}>
-            Available for opportunities
-          </span>
-        </motion.div>
+        {availableForOpportunities ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "2.5rem" }}
+          >
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4A7C6B", display: "inline-block" }} />
+            <span style={{ fontFamily: "var(--dm-sans)", fontSize: "0.8rem", color: "var(--ink-soft)" }}>
+              Available for opportunities
+            </span>
+          </motion.div>
+        ) : null}
 
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
