@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ContactAnchor } from "@/components/contact-anchor";
 import { getContactLinks } from "@/lib/navigation";
 import { site } from "@/lib/site";
 
@@ -10,9 +11,14 @@ export function ContactLinks() {
       <div className="r-links">
         {links.map((link) =>
           link.external ? (
-            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
+            <ContactAnchor
+              key={link.href}
+              href={link.href}
+              nativeApp={link.nativeApp}
+              appUrl={link.appUrl}
+            >
               {link.label}
-            </a>
+            </ContactAnchor>
           ) : (
             <Link key={link.href} href={link.href}>
               {link.label}

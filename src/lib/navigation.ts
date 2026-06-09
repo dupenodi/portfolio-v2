@@ -18,6 +18,8 @@ export type ContactLink = {
   label: string;
   href: string;
   external?: boolean;
+  nativeApp?: boolean;
+  appUrl?: string;
 };
 
 export function getContactLinks(): ContactLink[] {
@@ -25,7 +27,13 @@ export function getContactLinks(): ContactLink[] {
     { label: "email", href: `mailto:${site.email}`, external: true },
     { label: "resume", href: site.resumeUrl, external: true },
     { label: "github", href: site.github, external: true },
-    { label: "linkedin", href: site.linkedin, external: true },
+    {
+      label: "linkedin",
+      href: site.linkedin,
+      external: true,
+      nativeApp: true,
+      appUrl: site.linkedinApp,
+    },
     { label: "x", href: site.twitterUrl, external: true },
     { label: "writing", href: site.writing.href },
   ];

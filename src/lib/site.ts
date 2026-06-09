@@ -1,7 +1,7 @@
 export const site = {
   name: "Sharath Donepudi",
   url: "https://dupenodi.dev",
-  email: "sharath@dupenodi.dev",
+  email: "hi@dupenodi.dev",
   calendly: "https://calendly.com/sarath-dpudi/15min",
   resumeUrl: "/resume.pdf",
   location: "bengaluru, india",
@@ -33,7 +33,8 @@ export const site = {
   twitter: "@dupenodi",
   twitterUrl: "https://x.com/dupenodi",
   github: "https://github.com/dupenodi",
-  linkedin: "https://www.linkedin.com/in/sarath-donepudi/",
+  linkedin: "https://www.linkedin.com/comm/in/sarath-donepudi/",
+  linkedinApp: "linkedin://in/sarath-donepudi",
   keywords: [
     "Sharath Donepudi",
     "dupenodi",

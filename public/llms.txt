@@ -30,7 +30,7 @@ Essays are published as MDX at https://dupenodi.dev/writing
 ## Links
 
 - GitHub: https://github.com/dupenodi
-- LinkedIn: https://linkedin.com/in/sarath-donepudi
+- LinkedIn: https://www.linkedin.com/comm/in/sarath-donepudi/
 - X: https://x.com/dupenodi
 - Resume: https://dupenodi.dev/resume.pdf
 - Calendly: https://calendly.com/sarath-dpudi/15min

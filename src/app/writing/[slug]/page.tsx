@@ -17,6 +17,8 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return getPublishedPosts().map((post) => ({ slug: post.slug }));
 }
