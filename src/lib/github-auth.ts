@@ -5,8 +5,19 @@ export function getBearerToken(authHeader: string | null) {
   return authHeader.slice(7).trim();
 }
 
-/** Accept any valid PAT belonging to GITHUB_USERNAME (no env token match required). */
-export async function isGitHubOwnerToken(token: string) {
+export type GitHubTokenCheck =
+  | { ok: true; login: string }
+  | {
+      ok: false;
+      reason: "invalid_token" | "wrong_user";
+      login?: string;
+      expected: string;
+    };
+
+/** Accept any valid PAT belonging to GITHUB_USERNAME. */
+export async function verifyGitHubOwnerToken(token: string): Promise<GitHubTokenCheck> {
+  const expected = getGitHubUsername();
+
   const res = await fetch("https://api.github.com/user", {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -16,8 +27,16 @@ export async function isGitHubOwnerToken(token: string) {
     cache: "no-store",
   });
 
-  if (!res.ok) return false;
+  if (!res.ok) {
+    return { ok: false, reason: "invalid_token", expected };
+  }
 
   const user = (await res.json()) as { login?: string };
-  return user.login?.toLowerCase() === getGitHubUsername().toLowerCase();
+  const login = user.login ?? "";
+
+  if (login.toLowerCase() !== expected.toLowerCase()) {
+    return { ok: false, reason: "wrong_user", login, expected };
+  }
+
+  return { ok: true, login };
 }
