@@ -1,18 +1,12 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { getBearerToken, isGitHubOwnerToken } from "@/lib/github-auth";
 import { GITHUB_REPOS_TAG, getGitHubRepos } from "@/lib/github";
 
-function getBearerToken(request: NextRequest) {
-  const auth = request.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) return null;
-  return auth.slice(7).trim();
-}
-
 export async function POST(request: NextRequest) {
-  const expected = process.env.GITHUB_TOKEN;
-  const token = getBearerToken(request);
+  const token = getBearerToken(request.headers.get("authorization"));
 
-  if (!expected || !token || token !== expected) {
+  if (!token || !(await isGitHubOwnerToken(token))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
