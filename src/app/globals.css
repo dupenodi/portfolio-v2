@@ -96,6 +96,17 @@ a {
   width: fit-content;
 }
 
+.r-avatar {
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+
 .r-name {
   font-size: 1.75rem;
   font-weight: 600;

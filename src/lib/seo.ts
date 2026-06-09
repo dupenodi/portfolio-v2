@@ -20,6 +20,7 @@ export function createMetadata({
 }: PageMeta): Metadata {
   const url = new URL(path, site.url).toString();
   const ogImage = new URL("/opengraph-image", site.url).toString();
+  const ogImageAlt = site.imageAlt;
 
   return {
     title,
@@ -41,14 +42,14 @@ export function createMetadata({
       locale: "en_US",
       type,
       ...(publishedTime && type === "article" ? { publishedTime } : {}),
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: ogImageAlt || title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       creator: site.twitter,
-      images: [ogImage],
+      images: [{ url: ogImage, alt: ogImageAlt || title }],
     },
     robots: noIndex
       ? { index: false, follow: false }
@@ -121,6 +122,7 @@ export function personJsonLd() {
       url: site.companyUrl,
     },
     description: site.description,
+    image: new URL(site.image, site.url).toString(),
     knowsAbout: [
       "Artificial Intelligence",
       "Large Language Models",

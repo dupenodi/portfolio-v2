@@ -5,6 +5,8 @@ export const site = {
   calendly: "https://calendly.com/sarath-dpudi/15min",
   resumeUrl: "/resume.pdf",
   location: "bengaluru, india",
+  image: "/joel.png",
+  imageAlt: "Illustration of Sharath Donepudi",
   identity: {
     primary: "sharath donepudi",
     alt: "dupenodi",

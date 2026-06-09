@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navItems, navKeyForPath } from "@/lib/navigation";
@@ -13,6 +14,14 @@ export function SiteRail() {
   return (
     <aside className="rail">
       <Link href="/" className="r-id">
+        <Image
+          src={site.image}
+          alt={site.imageAlt}
+          width={56}
+          height={56}
+          className="r-avatar"
+          priority
+        />
         <div className="r-name">
           sharath
           <br />
