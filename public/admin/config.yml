@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# Sveltia CMS — https://sveltiacms.app/en/docs/start
+# Repo must match your GitHub remote (dupenodi/portfolio-v2).
+
+backend:
+  name: github
+  repo: dupenodi/portfolio-v2
+  branch: main
+  # For OAuth in production, set base_url to your auth worker URL — see docs/CMS.md
+
+  # Sveltia ignores local_backend; local dev uses "Work with Local Repository" in the browser.
+
+media_folder: public/media
+public_folder: /media
+
+publish_mode: simple
+
+collections:
+  - name: writing
+    label: Writing
+    label_singular: Essay
+    folder: content/posts
+    create: true
+    slug: "{{slug}}"
+    extension: mdx
+    format: frontmatter
+    summary: "{{description}}"
+    sortable_fields: [date, title]
+    view_filters:
+      - label: Drafts
+        field: draft
+        pattern: true
+    fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Description
+        name: description
+        widget: text
+        hint: Used for SEO, RSS, and social previews (1–2 sentences).
+      - label: Publish date
+        name: date
+        widget: datetime
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        hint: Drafts are hidden on the live site.
+      - label: Tags
+        name: tags
+        widget: list
+        default: []
+      - label: What this covers
+        name: answers
+        widget: list
+        required: false
+        default: []
+        hint: Optional bullet list shown at the top of the essay.
+      - label: Body
+        name: body
+        widget: markdown
+
+  - name: travel
+    label: Travel
+    label_singular: Trip
+    folder: content/travel
+    create: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    identifier_field: place
+    summary: "{{place}}"
+    sortable_fields: [date, place]
+    fields:
+      - label: Slug
+        name: slug
+        widget: string
+        pattern: ["^[a-z0-9-]+$", "Use lowercase letters, numbers, and hyphens only"]
+      - label: Place
+        name: place
+        widget: string
+        hint: Title shown on /travel (e.g. tamil nadu, slowly).
+      - label: Start date
+        name: date
+        widget: datetime
+        hint: Calendar picker — sorts trips newest first. Shown under the title.
+      - label: End date
+        name: endDate
+        widget: datetime
+        required: false
+        hint: Optional for multi-day trips. Collapses to month/year on the page.
+      - label: Photos
+        name: photos
+        widget: image
+        multiple: true
+        default: []
+        hint: Select or drag multiple images — saved to public/media.

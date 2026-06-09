@@ -1,28 +1,30 @@
-import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Experience from "@/components/Experience";
-import Projects from "@/components/Projects";
-import Blog from "@/components/Blog";
-import Contact from "@/components/Contact";
-import { getAvailableForOpportunities } from "@/lib/available-for-opportunities";
-import { getGitHubRepos } from "@/lib/github";
-import { getBlogPosts } from "@/lib/blog-feed";
+import Link from "next/link";
+import { GitHubContributions } from "@/components/github-contributions";
+import { HeroIdentity } from "@/components/hero-identity";
+import { site } from "@/lib/site";
 
-export default async function Home() {
-  const [repos, posts] = await Promise.all([
-    getGitHubRepos(process.env.GITHUB_USERNAME ?? "dupenodi"),
-    getBlogPosts(process.env.BLOG_FEED_URL ?? "https://reminiscence.bearblog.dev/feed/"),
-  ]);
-  const availableForOpportunities = getAvailableForOpportunities();
+export default function HomePage() {
+  const { company, workHref, text, emphasis } = site.heroBio;
+  const parts = text.split(`the ${emphasis}`);
 
   return (
-    <main>
-      <Hero availableForOpportunities={availableForOpportunities} />
-      <About />
-      <Projects repos={repos} />
-      <Experience />
-      <Blog posts={posts} />
-      <Contact />
-    </main>
+    <div className="page-enter hero">
+      <div className="stagger">
+        <h1 className="hero-name">
+          <HeroIdentity />
+        </h1>
+        <p className="hero-lede">{site.heroHeadline}</p>
+        <p className="hero-bio">
+          at{" "}
+          <Link href={workHref} className="ilink">
+            {company}
+          </Link>{" "}
+          {parts[0]}
+          the <strong>{emphasis}</strong>
+          {parts[1]}
+        </p>
+        <GitHubContributions />
+      </div>
+    </div>
   );
 }

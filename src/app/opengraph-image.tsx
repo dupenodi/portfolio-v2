@@ -1,13 +1,13 @@
 import { ImageResponse } from "next/og";
-import { getAvailableForOpportunities } from "@/lib/available-for-opportunities";
+import { site } from "@/lib/site";
 
 export const runtime = "edge";
-export const alt = "Sharath Donepudi — Full Stack AI Developer";
+export const alt = site.description;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OGImage() {
-  const showAvailability = getAvailableForOpportunities();
+  const role = `${site.railRole.prefix} ${site.railRole.company}`;
 
   return new ImageResponse(
     (
@@ -18,41 +18,20 @@ export default function OGImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#F8F6F2",
-          padding: "80px",
-          fontFamily: "Georgia, serif",
+          background: "#0b0b09",
+          padding: 80,
+          fontFamily: "system-ui, sans-serif",
+          color: "#f1f0e6",
         }}
       >
-        {/* Top */}
-        {showAvailability ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4A7C6B" }} />
-            <span style={{ fontSize: 16, color: "#78716C", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "system-ui, sans-serif" }}>
-              Available for opportunities
-            </span>
+        <div />
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ fontSize: 52, fontWeight: 500, letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+            {site.heroHeadline}
           </div>
-        ) : (
-          <div />
-        )}
-
-        {/* Middle */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ fontSize: 96, fontWeight: 900, fontStyle: "italic", color: "#1A1917", lineHeight: 0.9, letterSpacing: "-0.03em" }}>
-            Sharath.
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "24px" }}>
-            <span style={{ fontSize: 22, color: "#44403C", fontFamily: "system-ui, sans-serif" }}>Full Stack AI Developer</span>
-            <span style={{ fontSize: 18, color: "#78716C", fontFamily: "system-ui, sans-serif" }}>
-              Founding Engineer <span style={{ color: "#C05C42" }}>@ Niti AI</span> · Bengaluru
-            </span>
-          </div>
+          <div style={{ fontSize: 22, color: "#6c6b5e" }}>{role}</div>
         </div>
-
-        {/* Bottom */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <span style={{ fontSize: 18, color: "#78716C", fontFamily: "system-ui, sans-serif" }}>dupenodi.dev</span>
-          <div style={{ width: 48, height: 2, background: "#C05C42" }} />
-        </div>
+        <div style={{ fontSize: 20, color: "#c2f24a" }}>{site.url.replace("https://", "")}</div>
       </div>
     ),
     { ...size }

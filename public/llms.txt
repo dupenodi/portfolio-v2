@@ -1,0 +1,52 @@
+# Sharath Donepudi — dupenodi.dev
+
+> Full stack AI developer and founding engineer at Niti AI (Bengaluru, India). Builds AI-first retention infrastructure: LLM pipelines, agent systems, and full-stack product.
+
+## About
+
+- Name: Sharath Donepudi
+- Role: Founding Engineer / Full Stack AI Developer
+- Company: Niti AI — https://niti.ai
+- Location: Bengaluru, India
+- Email: hi@dupenodi.dev
+- Calendly (15 min): https://calendly.com/sarath-dpudi/15min
+- Website: https://dupenodi.dev
+
+## Expertise
+
+- Large language models (LLMs), RAG, and multi-agent systems
+- Full-stack engineering (Next.js, React, Python, Go)
+- Early-stage startup product development
+- Retention marketing and AI-native campaign tooling
+
+## Writing (on-site)
+
+Essays are published as MDX at https://dupenodi.dev/writing
+
+- Writing index: https://dupenodi.dev/writing
+- Example essay: https://dupenodi.dev/writing/building-with-agents
+- RSS: https://dupenodi.dev/rss.xml
+
+## Links
+
+- GitHub: https://github.com/dupenodi
+- LinkedIn: https://linkedin.com/in/sarath-donepudi
+- X: https://x.com/dupenodi
+- Resume: https://dupenodi.dev/resume.pdf
+- Calendly: https://calendly.com/sarath-dpudi/15min
+
+## Site sections
+
+- Home: https://dupenodi.dev/
+- Work: https://dupenodi.dev/work
+- Projects: https://dupenodi.dev/projects
+- Writing: https://dupenodi.dev/writing
+- Travel: https://dupenodi.dev/travel
+- Now: https://dupenodi.dev/now
+- Uses: https://dupenodi.dev/uses
+
+## Machine-readable
+
+- Sitemap: https://dupenodi.dev/sitemap.xml
+- RSS: https://dupenodi.dev/rss.xml
+- LLMs: https://dupenodi.dev/llms.txt

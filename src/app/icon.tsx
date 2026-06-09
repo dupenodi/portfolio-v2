@@ -11,20 +11,17 @@ export default function Icon() {
         style={{
           width: 32,
           height: 32,
-          background: "#1A1917",
-          borderRadius: 6,
+          background: "#0b0b09",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "Georgia, serif",
-          fontStyle: "italic",
-          fontWeight: 900,
-          fontSize: 16,
-          color: "#F8F6F2",
-          letterSpacing: "-0.03em",
+          fontFamily: "system-ui, sans-serif",
+          fontWeight: 600,
+          fontSize: 18,
+          color: "#c2f24a",
         }}
       >
-        S
+        s
       </div>
     ),
     { ...size }

@@ -1,3 +1,7 @@
+import { getGitHubRevalidateSeconds, getGitHubUsername } from "@/lib/env";
+
+export const GITHUB_REPOS_TAG = "github-repos";
+
 export interface GitHubRepo {
   id: number;
   name: string;
@@ -8,34 +12,42 @@ export interface GitHubRepo {
   language: string | null;
   stargazers_count: number;
   topics: string[];
+  created_at: string;
   pushed_at: string;
   fork: boolean;
 }
 
-export async function getGitHubRepos(username: string): Promise<GitHubRepo[]> {
+export async function getGitHubRepos(
+  username = getGitHubUsername()
+): Promise<GitHubRepo[]> {
   const headers: HeadersInit = {
     Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
   };
   if (process.env.GITHUB_TOKEN) {
-    headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
 
   const res = await fetch(
     `https://api.github.com/users/${username}/repos?sort=pushed&per_page=100&type=owner`,
     {
       headers,
-      next: { revalidate: 3600 },
+      next: {
+        revalidate: getGitHubRevalidateSeconds(),
+        tags: [GITHUB_REPOS_TAG],
+      },
     }
   );
 
-  if (!res.ok) return [];
+  if (!res.ok) {
+    console.error("[github] fetch failed", res.status, await res.text().catch(() => ""));
+    return [];
+  }
 
   const repos: GitHubRepo[] = await res.json();
 
-  // Shows repos tagged with the "portfolio" topic on GitHub.
-  // To tag a repo: repo page → hover "About" in right sidebar → click ⚙️ → add topic "portfolio"
+  // Tag repos with topic "portfolio" on GitHub to curate what appears first.
   const featured = repos.filter((r) => !r.fork && r.topics?.includes("portfolio"));
 
-  // Falls back to all non-fork repos until at least one is tagged
   return featured.length > 0 ? featured : repos.filter((r) => !r.fork);
 }

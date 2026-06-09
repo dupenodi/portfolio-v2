@@ -1,0 +1,12 @@
+/* TEAM */
+Developer: Sharath Donepudi
+Site: https://dupenodi.dev
+Location: Bengaluru, India
+
+/* THANKS */
+Built with Next.js on Vercel.
+
+/* SITE */
+Last update: 2026-06
+Standards: HTML5, CSS3
+Components: React, TypeScript, Tailwind CSS
