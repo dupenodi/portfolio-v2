@@ -17,8 +17,13 @@ export interface GitHubRepo {
   fork: boolean;
 }
 
+type GetGitHubReposOptions = {
+  fresh?: boolean;
+};
+
 export async function getGitHubRepos(
-  username = getGitHubUsername()
+  username = getGitHubUsername(),
+  options: GetGitHubReposOptions = {}
 ): Promise<GitHubRepo[]> {
   const headers: HeadersInit = {
     Accept: "application/vnd.github+json",
@@ -32,10 +37,14 @@ export async function getGitHubRepos(
     `https://api.github.com/users/${username}/repos?sort=pushed&per_page=100&type=owner`,
     {
       headers,
-      next: {
-        revalidate: getGitHubRevalidateSeconds(),
-        tags: [GITHUB_REPOS_TAG],
-      },
+      ...(options.fresh
+        ? { cache: "no-store" }
+        : {
+            next: {
+              revalidate: getGitHubRevalidateSeconds(),
+              tags: [GITHUB_REPOS_TAG],
+            },
+          }),
     }
   );
 
@@ -46,8 +55,8 @@ export async function getGitHubRepos(
 
   const repos: GitHubRepo[] = await res.json();
 
-  // Tag repos with topic "portfolio" on GitHub to curate what appears first.
-  const featured = repos.filter((r) => !r.fork && r.topics?.includes("portfolio"));
+  // Tag repos with topic "portfolio" on GitHub to curate the list (forks included).
+  const featured = repos.filter((r) => r.topics?.includes("portfolio"));
 
   return featured.length > 0 ? featured : repos.filter((r) => !r.fork);
 }
