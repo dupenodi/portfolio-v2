@@ -1,6 +1,6 @@
 import { GListRow } from "@/components/g-list-row";
 import { SectionHead } from "@/components/section-head";
-import { projects } from "@/lib/projects";
+import { getGitHubRepos } from "@/lib/github";
 import { createMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
@@ -10,31 +10,36 @@ export const metadata = createMetadata({
   path: "/projects",
 });
 
-export default function ProjectsPage() {
+function formatIndex(position: number) {
+  return String(position).padStart(2, "0");
+}
+
+function formatRepoMeta(description: string | null, language: string | null) {
+  if (description?.trim()) return description.trim();
+  if (language) return language.toLowerCase();
+  return undefined;
+}
+
+export default async function ProjectsPage() {
+  const repos = await getGitHubRepos();
+
   return (
     <div className="page-enter">
       <SectionHead>projects</SectionHead>
       <div className="glist stagger">
-        {projects.map((project) =>
-          project.github ? (
+        {repos.length === 0 ? (
+          <p className="ref">nothing here yet.</p>
+        ) : (
+          repos.map((repo, index) => (
             <GListRow
-              key={project.name}
-              href={project.github}
-              index={project.index}
-              title={project.name}
-              meta={project.meta}
+              key={repo.id}
+              href={repo.html_url}
+              index={formatIndex(index + 1)}
+              title={repo.name}
+              meta={formatRepoMeta(repo.description, repo.language)}
               external
             />
-          ) : (
-            <div key={project.name} className="grow crow">
-              <span className="g-ix">{project.index}</span>
-              <div className="c-text">
-                <div className="c-name">{project.name}</div>
-                <div className="c-meta">{project.meta}</div>
-              </div>
-              <span className="c-arr" aria-hidden="true" />
-            </div>
-          )
+          ))
         )}
       </div>
     </div>

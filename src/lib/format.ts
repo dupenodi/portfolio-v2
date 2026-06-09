@@ -75,13 +75,6 @@ export function formatTripDates(startStr: string, endStr?: string): string {
   return `${startMonth} ${startYear} – ${endMonth} ${endYear}`;
 }
 
-/** `jun 2022 — present` */
-export function formatProjectPeriod(startStr: string, active = true): string {
-  const start = formatMonthYear(startStr);
-  if (!start) return "";
-  return active ? `${start} — present` : start;
-}
-
 /** `jun'26` — matches prototype gutter width */
 export function formatPostDateShort(dateStr: string): string {
   const d = parseLocalDate(dateStr);
