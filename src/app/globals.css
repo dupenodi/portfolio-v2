@@ -27,7 +27,7 @@
 
   --rail: calc(15rem * var(--type-scale));
   --main: calc(51rem * var(--type-scale));
-  --prose: min(var(--main), 100%);
+  --shell-max: calc(var(--rail) + var(--main) + 6rem);
   --px: clamp(1.5rem, 5vw, 2.5rem);
   --shell-pt: clamp(3rem, 7vh, 4.5rem);
   --g-ix-col: calc(5.5ch * var(--type-scale));
@@ -70,7 +70,8 @@ a {
 /* shell */
 
 .shell {
-  width: 100%;
+  max-width: var(--shell-max);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: var(--rail) 1fr;
   min-height: 100vh;
@@ -612,7 +613,7 @@ a {
   font-weight: 300;
   line-height: 1.8;
   color: var(--body);
-  max-width: var(--prose);
+  max-width: 32rem;
   overflow-wrap: break-word;
 }
 
@@ -658,7 +659,7 @@ a {
   letter-spacing: 0.04em;
   margin-top: 0.1rem;
   line-height: 1.5;
-  max-width: var(--prose);
+  max-width: 32rem;
   overflow-wrap: break-word;
 }
 
@@ -760,7 +761,7 @@ a {
 }
 
 .d-body {
-  max-width: var(--prose);
+  max-width: 34rem;
 }
 
 .d-body p {
@@ -886,12 +887,12 @@ a {
 
 .post-tags {
   margin: -1rem 0 2rem;
-  max-width: var(--prose);
+  max-width: 34rem;
 }
 
 .post-nav {
   margin-top: 2.5rem;
-  max-width: var(--prose);
+  max-width: 34rem;
 }
 
 .post-nav-grid {
