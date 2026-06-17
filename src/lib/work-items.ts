@@ -13,6 +13,6 @@ export const workItems: WorkItem[] = [
     company: "niti ai",
     period: "2023 — now",
     description:
-      "sole full-time engineer with interns. built it all from nothing: a bigquery-backed meta ads analytics layer, an AI-assisted creative scoring system, and a hindi/hinglish voice agent for loan pre-screening. the job is whatever needs shipping that week.",
+      "founding engineer, still the only full-time one. built the bigquery ads analytics layer, ai-assisted creative scoring, and most of the production stack with interns. before that, the no-code platform, client sdks, and multi-tenant backend.",
   },
 ];

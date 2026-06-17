@@ -13,14 +13,14 @@ export const site = {
   },
   colophon: "bengaluru, india · 2026",
   description:
-    "Founding engineer at Niti AI. Builds the product layer that makes AI systems work in production — products, platform, and the infra between.",
+    "founding engineer at niti ai. builds the product layer that makes ai systems work in production: products, platform, and the infra between.",
   company: "Niti AI",
   companyUrl: "https://niti.ai",
-  heroHeadline: "i build the product layer that makes AI systems work in production.",
+  heroHeadline: "i build the product layer that makes ai systems work in production.",
   heroBio: {
     company: "niti ai",
     workHref: "/work",
-    text: 'i\'m the one who builds it, whatever "it" is that week. lately a hindi voice agent that screens loan applicants, and the analytics that grade ad creative before money goes behind it. the part i care about is the boring middle: the data pipelines, the system design, and the product plumbing that holds together when real users touch it.',
+    text: 'i joined with the founding team and am still the only full-time engineer. spent the first couple years on the core platform and sdks; now mostly ads analytics, creative scoring, and keeping production systems stable. the part i care about is the boring middle: the data pipelines, the system design, and the product plumbing that holds together when real users touch it.',
     emphasis: "data pipelines, the system design, and the product plumbing",
   },
   railRole: {

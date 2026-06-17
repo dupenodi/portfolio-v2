@@ -348,7 +348,7 @@ a {
   text-wrap: balance;
 }
 
-.hero p {
+.hero p:not(.hero-lede) {
   font-size: var(--text-body);
   font-weight: 300;
   line-height: 1.85;
@@ -1312,11 +1312,7 @@ body.lightbox-open {
     letter-spacing: 0.04em;
   }
 
-  .hero-lede {
-    max-width: none;
-  }
-
-  .hero p {
+  .hero p:not(.hero-lede) {
     line-height: 1.8;
     overflow-wrap: break-word;
   }

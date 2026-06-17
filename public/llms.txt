@@ -1,12 +1,12 @@
-# Sharath Donepudi — dupenodi.dev
+# sharath donepudi · dupenodi.dev
 
-> Founding engineer at Niti AI (Bengaluru, India). Builds the product layer that makes AI systems work in production — products, platform, and the infra between.
+> founding engineer at niti ai (bengaluru, india). builds the product layer that makes ai systems work in production: products, platform, and the infra between.
 
 ## About
 
 - Name: Sharath Donepudi
-- Role: Founding Engineer / Full-Stack Product & Platform
-- Company: Niti AI — https://niti.ai
+- Role: founding engineer / full-stack product & platform
+- Company: niti ai (https://niti.ai)
 - Location: Bengaluru, India
 - Email: hi@dupenodi.dev
 - Calendly (15 min): https://calendly.com/sarath-dpudi/15min
@@ -14,10 +14,10 @@
 
 ## Expertise
 
-- Production AI systems and the product layer around them
-- Full-stack engineering (Next.js, React, Python, Go)
-- Data pipelines, system design, and product plumbing
-- Early-stage startup product development
+- production ai systems and the product layer around them
+- full-stack engineering (Next.js, React, Python, Go)
+- data pipelines, system design, and product plumbing
+- early-stage startup product development
 
 ## Writing (on-site)
 
