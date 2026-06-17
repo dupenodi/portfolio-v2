@@ -9,7 +9,7 @@ export const contentType = "image/png";
 
 export default async function OGImage() {
   const photoSrc = await getSiteImageDataUrl();
-  const role = `${site.railRole.prefix} ${site.railRole.company}`;
+  const role = `${site.railRole.prefix} ${site.railRole.company}. ${site.railRole.suffix}`;
 
   return new ImageResponse(
     (

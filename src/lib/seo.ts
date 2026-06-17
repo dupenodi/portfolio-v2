@@ -125,10 +125,11 @@ export function personJsonLd() {
     image: new URL(site.image, site.url).toString(),
     knowsAbout: [
       "Artificial Intelligence",
-      "Large Language Models",
+      "Production AI Systems",
       "Full-Stack Development",
-      "Agent Systems",
-      "Retention Marketing",
+      "Product Engineering",
+      "Platform Engineering",
+      "System Design",
     ],
     sameAs: [
       site.github,

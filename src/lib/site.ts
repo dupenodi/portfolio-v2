@@ -13,7 +13,7 @@ export const site = {
   },
   colophon: "bengaluru, india · 2026",
   description:
-    "Founding engineer at Niti AI — full-stack AI products, agents, and LLM pipelines.",
+    "Founding engineer at Niti AI. Builds the product layer that makes AI systems work in production — products, platform, and the infra between.",
   company: "Niti AI",
   companyUrl: "https://niti.ai",
   heroHeadline: "i build the product layer that makes AI systems work in production.",
@@ -42,6 +42,8 @@ export const site = {
     "dupenodi",
     "AI engineer",
     "founding engineer",
+    "product engineering",
+    "platform engineering",
     "Niti AI",
     "Bengaluru",
   ],
