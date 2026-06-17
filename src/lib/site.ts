@@ -16,17 +16,17 @@ export const site = {
     "Founding engineer at Niti AI — full-stack AI products, agents, and LLM pipelines.",
   company: "Niti AI",
   companyUrl: "https://niti.ai",
-  heroHeadline: "i make language models useful outside the demo.",
+  heroHeadline: "i build the product layer that makes AI systems work in production.",
   heroBio: {
     company: "niti ai",
     workHref: "/work",
-    text: 'i\'m the one who builds it, whatever "it" is that week. lately a hindi voice agent that screens loan applicants, and the analytics that grade ad creative before money goes behind it. the part i care about is the boring middle: the context and data wiring that decides whether a model holds up once real users touch it.',
-    emphasis: "context and data wiring",
+    text: 'i\'m the one who builds it, whatever "it" is that week. lately a hindi voice agent that screens loan applicants, and the analytics that grade ad creative before money goes behind it. the part i care about is the boring middle: the data pipelines, the system design, and the product plumbing that holds together when real users touch it.',
+    emphasis: "data pipelines, the system design, and the product plumbing",
   },
   railRole: {
     prefix: "founding engineer at",
     company: "niti ai",
-    suffix: "full-stack ai: agents, llm pipelines, retention.",
+    suffix: "full-stack: products, platform, and the infra between.",
   },
   writing: {
     href: "/writing",
