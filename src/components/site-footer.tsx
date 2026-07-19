@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BuyMeAChai } from "@/components/buy-me-a-chai";
 import { ContactAnchor } from "@/components/contact-anchor";
 import { getContactLinks } from "@/lib/navigation";
 import { site } from "@/lib/site";
@@ -29,6 +30,7 @@ export function SiteFooter() {
       <a className="r-call site-footer-call" href={site.calendly} target="_blank" rel="noopener noreferrer">
         book a call
       </a>
+      <BuyMeAChai />
       <p className="site-footer-colophon">{site.colophon}</p>
     </footer>
   );

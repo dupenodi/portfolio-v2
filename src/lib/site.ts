@@ -3,6 +3,8 @@ export const site = {
   url: "https://dupenodi.dev",
   email: "hi@dupenodi.dev",
   calendly: "https://calendly.com/sarath-dpudi/15min",
+  buyMeAChai: "https://buymeachai.ezee.li/dupenodi",
+  buyMeAChaiImage: "https://buymeachai.ezee.li/assets/images/buymeachai-button.png",
   resumeUrl: "/resume.pdf",
   location: "bengaluru, india",
   image: "/joel.png",

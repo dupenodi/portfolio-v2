@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "buymeachai.ezee.li",
+        pathname: "/assets/images/**",
+      },
     ],
   },
   experimental: {
