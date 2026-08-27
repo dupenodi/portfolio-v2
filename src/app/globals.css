@@ -631,8 +631,113 @@ a {
   font-weight: 300;
   line-height: 1.8;
   color: var(--body);
-  max-width: 32rem;
+  max-width: 36rem;
   overflow-wrap: break-word;
+}
+
+.work-hls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  margin-top: 1.35rem;
+  max-width: 36rem;
+}
+
+.work-hl-title {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--acc);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+
+.work-hl-body {
+  font-size: var(--text-copy);
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--body);
+}
+
+.work-skills {
+  margin-top: 2.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-width: 36rem;
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.85rem;
+  align-items: baseline;
+}
+
+.skill-label {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+
+.skill-items {
+  font-size: var(--text-copy);
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--mid);
+}
+
+.proj .c-name {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.proj-kind {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+}
+
+.proj .c-meta {
+  max-width: 38rem;
+}
+
+.proj-foot {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  margin-top: 0.45rem;
+}
+
+.proj-stack {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  font-weight: 300;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+
+.proj-live {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--mid);
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.proj-live:hover {
+  color: var(--acc);
+  border-bottom-color: var(--acc);
 }
 
 @media (hover: hover) {
@@ -648,8 +753,12 @@ a {
     color: var(--acc);
   }
 
-  .crow:hover .c-arr {
+  .crow:hover .c-arr,
+  .crow:hover .c-name {
     color: var(--acc);
+  }
+
+  .crow:hover .c-arr {
     transform: translate(2px, -2px);
   }
 }
@@ -1362,8 +1471,14 @@ body.lightbox-open {
   }
 
   .c-meta,
-  .work-body .desc {
+  .work-body .desc,
+  .work-hls,
+  .work-skills {
     max-width: none;
+  }
+
+  .skill-row {
+    grid-template-columns: 5.25rem 1fr;
   }
 
   .d-body {

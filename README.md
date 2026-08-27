@@ -14,12 +14,11 @@ Personal portfolio site built with Next.js, Framer Motion, and Tailwind CSS.
 ## Features
 
 - GitHub projects pulled dynamically (tag repos with `portfolio` topic to feature them)
-- Blog posts pulled from BearBlog Atom feed
-- Bookmarks pulled from Raindrop.io (tag with `portfolio` to include)
+- Writing from local MDX (`content/posts`) via Sveltia CMS
 - Contact form via Resend
 - Dark/light mode
 - OG image + favicon generated via Next.js
-- `/now`, `/uses`, `/bookmarks` pages
+- `/now`, `/uses` pages
 
 ## Getting Started
 
@@ -39,9 +38,6 @@ See `.env.example` for all required variables.
 | `RESEND_API_KEY` | Resend API key for contact form |
 | `CONTACT_EMAIL` | Email address to receive contact form submissions |
 | `GITHUB_USERNAME` | GitHub username for project fetching |
-| `BLOG_FEED_URL` | Atom feed URL for blog posts |
-| `RAINDROP_TOKEN` | Raindrop.io test token for bookmarks |
-| `RAINDROP_COLLECTION_ID` | Raindrop.io collection ID (use `0` for all) |
 
 ## Deploying
 

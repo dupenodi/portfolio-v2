@@ -6,10 +6,6 @@ export function getGitHubRevalidateSeconds(): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 300;
 }
 
-export function isBookmarksEnabled(): boolean {
-  return process.env.SHOW_BOOKMARKS === "true";
-}
-
 export function getGitHubUsername(): string {
   return process.env.GITHUB_USERNAME ?? "dupenodi";
 }

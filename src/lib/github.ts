@@ -1,6 +1,7 @@
 import { getGitHubRevalidateSeconds, getGitHubUsername } from "@/lib/env";
 
 export const GITHUB_REPOS_TAG = "github-repos";
+export const PORTFOLIO_TOPIC = "portfolio";
 
 export interface GitHubRepo {
   id: number;
@@ -15,11 +16,41 @@ export interface GitHubRepo {
   created_at: string;
   pushed_at: string;
   fork: boolean;
+  private: boolean;
 }
 
 type GetGitHubReposOptions = {
   fresh?: boolean;
 };
+
+type GitHubRepoJson = GitHubRepo & {
+  owner?: { login?: string };
+};
+
+function requestInit(headers: HeadersInit, fresh: boolean): RequestInit {
+  return {
+    headers,
+    ...(fresh
+      ? { cache: "no-store" }
+      : {
+          next: {
+            revalidate: getGitHubRevalidateSeconds(),
+            tags: [GITHUB_REPOS_TAG],
+          },
+        }),
+  };
+}
+
+async function fetchRepoPage(url: string, init: RequestInit): Promise<GitHubRepoJson[]> {
+  const res = await fetch(url, init);
+
+  if (!res.ok) {
+    console.error("[github] fetch failed", res.status, await res.text().catch(() => ""));
+    return [];
+  }
+
+  return (await res.json()) as GitHubRepoJson[];
+}
 
 export async function getGitHubRepos(
   username = getGitHubUsername(),
@@ -33,30 +64,20 @@ export async function getGitHubRepos(
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
 
-  const res = await fetch(
-    `https://api.github.com/users/${username}/repos?sort=pushed&per_page=100&type=owner`,
-    {
-      headers,
-      ...(options.fresh
-        ? { cache: "no-store" }
-        : {
-            next: {
-              revalidate: getGitHubRevalidateSeconds(),
-              tags: [GITHUB_REPOS_TAG],
-            },
-          }),
-    }
-  );
+  const init = requestInit(headers, Boolean(options.fresh));
+  const owner = username.toLowerCase();
 
-  if (!res.ok) {
-    console.error("[github] fetch failed", res.status, await res.text().catch(() => ""));
-    return [];
-  }
+  // /users/:user/repos is public-only. /user/repos includes private repos
+  // for the authenticated owner when GITHUB_TOKEN has the repo scope.
+  const url = process.env.GITHUB_TOKEN
+    ? "https://api.github.com/user/repos?affiliation=owner&sort=pushed&per_page=100"
+    : `https://api.github.com/users/${username}/repos?sort=pushed&per_page=100&type=owner`;
 
-  const repos: GitHubRepo[] = await res.json();
+  const repos = await fetchRepoPage(url, init);
 
-  // Tag repos with topic "portfolio" on GitHub to curate the list (forks included).
-  const featured = repos.filter((r) => r.topics?.includes("portfolio"));
-
-  return featured.length > 0 ? featured : repos.filter((r) => !r.fork);
+  return repos.filter((repo) => {
+    const login = repo.owner?.login?.toLowerCase();
+    if (login && login !== owner) return false;
+    return repo.topics?.includes(PORTFOLIO_TOPIC);
+  });
 }

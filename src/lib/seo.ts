@@ -115,7 +115,7 @@ export function personJsonLd() {
     name: site.name,
     url: site.url,
     email: site.email,
-    jobTitle: "Founding Engineer",
+    jobTitle: "Founding Fullstack Engineer",
     worksFor: {
       "@type": "Organization",
       name: site.company,
@@ -126,9 +126,11 @@ export function personJsonLd() {
     knowsAbout: [
       "artificial intelligence",
       "production ai systems",
+      "rag systems",
       "full-stack development",
       "product engineering",
       "platform engineering",
+      "sdk engineering",
       "system design",
     ],
     sameAs: [

@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { isBookmarksEnabled } from "@/lib/env";
 import { getPublishedPosts } from "@/lib/posts";
 import { site } from "@/lib/site";
 
@@ -18,11 +17,7 @@ const staticRoutes: {
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getPublishedPosts();
 
-  const routes = isBookmarksEnabled()
-    ? [...staticRoutes, { path: "/bookmarks", priority: 0.4, changeFrequency: "weekly" as const }]
-    : staticRoutes;
-
-  const staticEntries = routes.map(({ path, priority, changeFrequency }) => ({
+  const staticEntries = staticRoutes.map(({ path, priority, changeFrequency }) => ({
     url: `${site.url}${path}`,
     lastModified: new Date(),
     changeFrequency,
