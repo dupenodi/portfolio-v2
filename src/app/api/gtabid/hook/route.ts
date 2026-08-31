@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   answerVisitor,
+  LlmNotConfiguredError,
   type ChatTurn,
   type GtabidGuidance,
   verifyGtabidSignature,
@@ -94,12 +95,19 @@ export async function POST(request: NextRequest) {
   const repName =
     typeof rep?.name === "string" && rep.name.trim() ? rep.name.trim() : "Max";
 
-  const reply = await answerVisitor({
-    question: text,
-    history: readHistory(conversation),
-    repName,
-    guidance: readGuidance(payload),
-  });
-
-  return NextResponse.json({ reply });
+  try {
+    const reply = await answerVisitor({
+      question: text,
+      history: readHistory(conversation),
+      repName,
+      guidance: readGuidance(payload),
+    });
+    return NextResponse.json({ reply });
+  } catch (err) {
+    if (err instanceof LlmNotConfiguredError) {
+      return NextResponse.json({ error: err.message }, { status: 503 });
+    }
+    const detail = err instanceof Error ? err.message : "llm failed";
+    return NextResponse.json({ error: detail }, { status: 502 });
+  }
 }

@@ -1,17 +1,15 @@
 #!/usr/bin/env node
 /**
- * Live booth poller for gtabid.lol (Ocean Drive Diner / cafe).
- * Answers from Sharath's resume. Keep this process running or the counter goes away in ~2 min.
+ * Live LLM booth poller for gtabid.lol (Ocean Drive Diner / cafe).
  *
- *   GTABID_API_KEY=tok_… node scripts/gtabid-booth.mjs
+ *   OPENAI_API_KEY=sk-… GTABID_API_KEY=tok_… node scripts/gtabid-booth.mjs
  */
 
 const API_KEY = process.env.GTABID_API_KEY?.trim();
 const OWNER_KEY = process.env.GTABID_OWNER_KEY?.trim() || "ok_jjcnoiahbtacxr6ntqpguv";
 const SLOT_ID = "cafe";
 const BASE = "https://gtabid.lol";
-const GREETING =
-  "Hi, I'm the hire me pls booth rep — ask me anything.";
+const GREETING = "Hi, I'm the hire me pls booth rep — ask me anything.";
 
 const RESUME = `
 Sharath Donepudi (Sarath Donepudi, dupenodi). Founding Engineer at Niti AI, Bengaluru, Aug 2023–present.
@@ -28,8 +26,34 @@ Education: B.E. Computer Science, Sri Siva Subramaniya College of Engineering, C
 Contact: dupenodi.dev · hi@dupenodi.dev · sarath.dpudi@gmail.com · github.com/dupenodi · linkedin.com/in/sarath-donepudi · calendly.com/sarath-dpudi/15min
 `.trim();
 
+function llmTarget() {
+  const groq = process.env.GROQ_API_KEY?.trim();
+  const openai = process.env.OPENAI_API_KEY?.trim();
+  const openrouter = process.env.OPENROUTER_API_KEY?.trim();
+  if (openrouter) {
+    return {
+      apiKey: openrouter,
+      baseUrl: "https://openrouter.ai/api/v1",
+      model: "openai/gpt-4o-mini",
+    };
+  }
+  if (groq) {
+    return { apiKey: groq, baseUrl: "https://api.groq.com/openai/v1", model: "openai/gpt-oss-20b" };
+  }
+  if (openai) {
+    return { apiKey: openai, baseUrl: "https://api.openai.com/v1", model: "gpt-4o-mini" };
+  }
+  return null;
+}
+
 if (!API_KEY) {
   console.error("Set GTABID_API_KEY");
+  process.exit(1);
+}
+
+const LLM = llmTarget();
+if (!LLM) {
+  console.error("Set OPENAI_API_KEY, GROQ_API_KEY, or OPENROUTER_API_KEY — no extractive fallback");
   process.exit(1);
 }
 
@@ -59,95 +83,76 @@ async function getWorld() {
   return res.json();
 }
 
-const STOP = new Set(
-  "a an the and or of to in on for with is are was be do did does you your his him he what who where when how about can me please tell".split(
-    " ",
-  ),
-);
-
-function tokens(text) {
-  return text
-    .toLowerCase()
-    .split(/[^a-z0-9+#]+/)
-    .filter((t) => t.length > 1 && !STOP.has(t));
-}
-
-function extractive(question, extraContext) {
-  const query = tokens(`${question} ${extraContext ?? ""}`);
-  const paras = RESUME.split("\n").map((p) => p.trim()).filter(Boolean);
-  const scored = paras
-    .map((p) => {
-      const hay = new Set(tokens(p));
-      let score = 0;
-      for (const t of query) if (hay.has(t)) score += 1;
-      return { p, score };
-    })
-    .sort((a, b) => b.score - a.score);
-
-  const top = scored.filter((s) => s.score > 0).slice(0, 2);
-  if (top.length === 0) {
-    return "I don't have that on Sharath's resume. Site is dupenodi.dev, or email hi@dupenodi.dev.";
+function historyFromItem(item) {
+  const turns = [];
+  const raw = item.history ?? item.messages;
+  if (Array.isArray(raw)) {
+    for (const row of raw) {
+      const content = String(row.content ?? row.text ?? "").trim();
+      if (!content) continue;
+      turns.push({
+        role: row.role === "assistant" ? "assistant" : "user",
+        content,
+      });
+    }
   }
-  const joined = top.map((s) => s.p).join(" ");
-  const clipped = joined.length > 520 ? `${joined.slice(0, 519).trim()}…` : joined;
-  return clipped;
+  const ctx = String(item.context ?? "").trim();
+  if (ctx && turns.length === 0) {
+    turns.push({ role: "user", content: ctx });
+  }
+  return turns.slice(-8);
 }
 
-async function llmReply(question, shopContext) {
-  const groq = process.env.GROQ_API_KEY?.trim();
-  const openai = process.env.OPENAI_API_KEY?.trim();
-  const apiKey = groq || openai;
-  if (!apiKey) return null;
+async function llmReply(question, history, guidance) {
+  const instructions = guidance?.instructions ?? guidance?.objective ?? "";
+  const shop = guidance?.shop
+    ? `Company: ${guidance.shop.company}. Tagline: ${guidance.shop.tagline ?? ""}.`
+    : "";
 
-  const base = groq ? "https://api.groq.com/openai/v1" : "https://api.openai.com/v1";
-  const model = groq ? "openai/gpt-oss-20b" : "gpt-4o-mini";
-
-  const res = await fetch(`${base}/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.3,
-      max_tokens: 220,
-      messages: [
-        {
-          role: "system",
-          content: `You are the live booth rep for hire me pls (Sharath Donepudi) at Vice Bay / Ocean Drive Diner.
-Answer the visitor's latest question directly. 2–4 short sentences. No greeting, no booth overview unless asked.
-Use only the resume and shop context. If unknown, say so and point to dupenodi.dev or hi@dupenodi.dev.
+  const messages = [
+    {
+      role: "system",
+      content: `You are the live booth rep for hire me pls (Sharath Donepudi) at Vice Bay / Ocean Drive Diner.
+Have a conversation. Answer the visitor's latest message directly using chat history.
+2–4 short sentences. Sound like a person, not a resume paste. No greeting unless they just said hi.
+No markdown, no bullet walls. Ground facts in the resume. If unknown, say so and point to dupenodi.dev or hi@dupenodi.dev.
 Do not invent titles, dates, employers, metrics, or salary.
-
-SHOP:
-${shopContext}
+${instructions}
+${shop}
 
 RESUME:
 ${RESUME}`,
-        },
-        { role: "user", content: question },
-      ],
+    },
+    ...history,
+    { role: "user", content: question },
+  ];
+
+  const headers = {
+    Authorization: `Bearer ${LLM.apiKey}`,
+    "Content-Type": "application/json",
+  };
+  if (LLM.baseUrl.includes("openrouter.ai")) {
+    headers["HTTP-Referer"] = "https://dupenodi.dev";
+    headers["X-Title"] = "hire me pls booth";
+  }
+
+  const res = await fetch(`${LLM.baseUrl}/chat/completions`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model: LLM.model,
+      temperature: 0.5,
+      max_tokens: 220,
+      messages,
     }),
     signal: AbortSignal.timeout(12000),
   });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content?.trim() || null;
-}
-
-async function answerTodo(item, guidance) {
-  const question = String(item.question ?? item.text ?? "").trim();
-  const context = [
-    item.context,
-    guidance?.shop ? JSON.stringify(guidance.shop) : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  const fromLlm = await llmReply(question || String(item.context ?? ""), context).catch(() => null);
-  if (fromLlm) return fromLlm.slice(0, 700);
-  return extractive(question, context);
+  const raw = await res.text();
+  if (!res.ok) throw new Error(`LLM ${res.status}: ${raw.slice(0, 240)}`);
+  const data = JSON.parse(raw);
+  const text = data.choices?.[0]?.message?.content?.trim();
+  if (!text) throw new Error("LLM empty");
+  return text.slice(0, 700);
 }
 
 async function station() {
@@ -162,47 +167,33 @@ async function station() {
 
 async function loop() {
   await station();
-  console.log("booth live at Ocean Drive Diner. polling every 3s.");
+  console.log("booth live (llm", LLM.model + "). polling every 3s.");
 
   for (;;) {
     try {
       const world = await getWorld();
       const todo = Array.isArray(world.todo) ? world.todo : [];
-      const inbox = Array.isArray(world.inbox) ? world.inbox : [];
-      const items =
-        todo.length > 0
-          ? todo
-          : inbox.flatMap((thread) => {
-              const unanswered = thread.unanswered ?? thread.messages?.slice(-1) ?? [];
-              return unanswered.map((msg) => ({
-                conversationId: thread.id ?? thread.conversationId,
-                question: msg.content ?? msg.text ?? "",
-                context: thread.context ?? "",
-              }));
-            });
 
       if (world.me && world.me.station !== SLOT_ID) {
         console.log("not at cafe — re-stationing");
         await station();
       }
 
-      for (const item of items) {
+      for (const item of todo) {
         const conversationId = item.conversationId ?? item.id;
-        if (!conversationId) continue;
-        const text = await answerTodo(item, world.responseGuidance);
-        const replied = await act({
-          action: "reply",
-          conversationId,
-          text,
-        });
-        console.log(
-          "replied",
-          conversationId,
-          replied.status,
-          (item.question || "").slice(0, 80),
-          "→",
-          text.slice(0, 120),
-        );
+        const question = String(item.question ?? item.text ?? "").trim();
+        if (!conversationId || !question) continue;
+        try {
+          const text = await llmReply(question, historyFromItem(item), world.responseGuidance);
+          const replied = await act({
+            action: "reply",
+            conversationId,
+            text,
+          });
+          console.log("replied", conversationId, replied.status, question.slice(0, 80), "→", text.slice(0, 160));
+        } catch (err) {
+          console.error("llm skip", conversationId, err instanceof Error ? err.message : err);
+        }
       }
     } catch (err) {
       console.error("poll error", err instanceof Error ? err.message : err);

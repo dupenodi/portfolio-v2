@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { site } from "@/lib/site";
-import { formatRetrievedContext, retrieveResume } from "@/lib/resume-rag";
+import { resumeFullText } from "@/lib/resume-corpus";
 
 const MAX_SKEW_SECONDS = 5 * 60;
 const LLM_TIMEOUT_MS = 12_000;
@@ -17,6 +17,13 @@ export type GtabidGuidance = {
   objective?: string;
   style?: string[];
 };
+
+export class LlmNotConfiguredError extends Error {
+  constructor() {
+    super("Set GROQ_API_KEY, OPENAI_API_KEY, or OPENROUTER_API_KEY");
+    this.name = "LlmNotConfiguredError";
+  }
+}
 
 export function verifyGtabidSignature(input: {
   secret: string;
@@ -47,9 +54,10 @@ type LlmTarget = {
   model: string;
 };
 
-function getLlmTarget(): LlmTarget | null {
+export function getLlmTarget(): LlmTarget | null {
   const groq = process.env.GROQ_API_KEY?.trim();
   const openai = process.env.OPENAI_API_KEY?.trim();
+  const openrouter = process.env.OPENROUTER_API_KEY?.trim();
   const customKey = process.env.GTABID_LLM_API_KEY?.trim();
   const customBase = process.env.GTABID_LLM_BASE_URL?.trim();
   const overrideModel = process.env.GTABID_LLM_MODEL?.trim();
@@ -59,6 +67,14 @@ function getLlmTarget(): LlmTarget | null {
       apiKey: customKey,
       baseUrl: customBase.replace(/\/$/, ""),
       model: overrideModel || "gpt-4o-mini",
+    };
+  }
+
+  if (openrouter) {
+    return {
+      apiKey: openrouter,
+      baseUrl: "https://openrouter.ai/api/v1",
+      model: overrideModel || "openai/gpt-4o-mini",
     };
   }
 
@@ -81,23 +97,24 @@ function getLlmTarget(): LlmTarget | null {
   return null;
 }
 
-function buildSystemPrompt(repName: string, context: string, guidance?: GtabidGuidance): string {
+function buildSystemPrompt(repName: string, guidance?: GtabidGuidance): string {
   const style = guidance?.style?.length
     ? guidance.style.join("; ")
-    : "Be useful and specific. Keep it concise (usually 2–4 short sentences).";
+    : "Sound like a person at a booth, not a search result. 2–4 short sentences.";
 
   return [
     guidance?.role ||
-      `You are ${repName}, booth rep at gtabid.lol for hire me pls (${site.name} / Sarath Donepudi).`,
-    guidance?.objective || "Answer the visitor's latest message directly from the resume context.",
+      `You are ${repName}, live booth rep at gtabid.lol for hire me pls (${site.name} / Sarath Donepudi).`,
+    guidance?.objective ||
+      "Have a conversation. Answer the visitor's latest message directly. Use chat history. Do not dump the resume.",
     `Style: ${style}`,
-    "Chat is ~330px wide. No markdown headings, no bullet walls.",
-    "Answer only from CONTEXT. If it is not in context, say you do not know and point them to dupenodi.dev or hi@dupenodi.dev.",
-    "Do not invent titles, dates, employers, metrics, or salary. Do not make hiring promises.",
+    "Chat is ~330px wide. No markdown headings, no bullet walls, no greeting unless they just said hi.",
+    "Ground facts in the resume. If it is not in the resume, say you do not know and point to dupenodi.dev or hi@dupenodi.dev.",
+    "Do not invent titles, dates, employers, metrics, or salary.",
     `Site: ${site.url}. Email: ${site.email}. Calendly: ${site.calendly}.`,
     "",
-    "CONTEXT (retrieved from resume.pdf):",
-    context,
+    "RESUME:",
+    resumeFullText,
   ].join("\n");
 }
 
@@ -107,45 +124,54 @@ function clipReply(text: string): string {
   return `${trimmed.slice(0, MAX_REPLY_CHARS - 1).trimEnd()}…`;
 }
 
-function extractiveFallback(question: string): string {
-  const chunks = retrieveResume(question, 3);
-  const top = chunks.find((chunk) => chunk.id !== "profile" && chunk.id !== "contact") ?? chunks[0];
-  if (!top || top.score < 0.8) {
-    return `I don't have that on Sharath's resume. Site is ${site.url.replace("https://", "")} — or email ${site.email}.`;
+function readContent(content: unknown): string | null {
+  if (typeof content === "string" && content.trim()) return content.trim();
+  if (Array.isArray(content)) {
+    const text = content
+      .map((part) => {
+        if (typeof part === "string") return part;
+        if (part && typeof part === "object" && "text" in part && typeof part.text === "string") {
+          return part.text;
+        }
+        return "";
+      })
+      .join("");
+    return text.trim() || null;
   }
-  const sentence = top.text.split(/(?<=\.)\s+/)[0] ?? top.text;
-  return clipReply(`${sentence} More on ${site.url.replace("https://", "")}.`);
+  return null;
 }
 
-type OpenAiMessage = {
-  role?: string;
-  content?: string | null;
-};
+async function completeChat(target: LlmTarget, messages: { role: string; content: string }[]): Promise<string> {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${target.apiKey}`,
+    "Content-Type": "application/json",
+  };
+  if (target.baseUrl.includes("openrouter.ai")) {
+    headers["HTTP-Referer"] = site.url;
+    headers["X-Title"] = "hire me pls booth";
+  }
 
-async function completeChat(target: LlmTarget, messages: { role: string; content: string }[]): Promise<string | null> {
   const response = await fetch(`${target.baseUrl}/chat/completions`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${target.apiKey}`,
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify({
       model: target.model,
-      temperature: 0.3,
+      temperature: 0.5,
       max_tokens: 220,
       messages,
     }),
     signal: AbortSignal.timeout(LLM_TIMEOUT_MS),
   });
 
-  if (!response.ok) return null;
+  const raw = await response.text();
+  if (!response.ok) {
+    throw new Error(`LLM ${response.status}: ${raw.slice(0, 240)}`);
+  }
 
-  const data = (await response.json()) as {
-    choices?: { message?: OpenAiMessage }[];
-  };
-  const message = data.choices?.[0]?.message;
-  const content = message?.content?.trim();
-  return content || null;
+  const data = JSON.parse(raw) as { choices?: { message?: { content?: unknown } }[] };
+  const content = readContent(data.choices?.[0]?.message?.content);
+  if (!content) throw new Error("LLM returned empty content");
+  return content;
 }
 
 export async function answerVisitor(input: {
@@ -154,27 +180,19 @@ export async function answerVisitor(input: {
   repName: string;
   guidance?: GtabidGuidance;
 }): Promise<string> {
-  const retrieved = retrieveResume(input.question);
-  const context = formatRetrievedContext(retrieved);
-  const fallback = extractiveFallback(input.question);
   const target = getLlmTarget();
+  if (!target) throw new LlmNotConfiguredError();
 
-  if (!target) return fallback;
+  const history = input.history.slice(-MAX_HISTORY).map((turn) => ({
+    role: turn.role,
+    content: turn.content,
+  }));
 
-  try {
-    const history = input.history.slice(-MAX_HISTORY).map((turn) => ({
-      role: turn.role,
-      content: turn.content,
-    }));
+  const content = await completeChat(target, [
+    { role: "system", content: buildSystemPrompt(input.repName, input.guidance) },
+    ...history,
+    { role: "user", content: input.question },
+  ]);
 
-    const content = await completeChat(target, [
-      { role: "system", content: buildSystemPrompt(input.repName, context, input.guidance) },
-      ...history,
-      { role: "user", content: input.question },
-    ]);
-
-    return content ? clipReply(content) : fallback;
-  } catch {
-    return fallback;
-  }
+  return clipReply(content);
 }
