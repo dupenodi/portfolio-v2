@@ -9,3 +9,8 @@ export function getGitHubRevalidateSeconds(): number {
 export function getGitHubUsername(): string {
   return process.env.GITHUB_USERNAME ?? "dupenodi";
 }
+
+export function getGtabidWebhookSecret(): string | null {
+  const secret = process.env.GTABID_WEBHOOK_SECRET?.trim();
+  return secret ? secret : null;
+}
