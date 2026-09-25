@@ -7,6 +7,7 @@ import { getGitHubCard } from "@/lib/github-card";
 import { getLinkedInCard } from "@/lib/linkedin-card";
 import { getXCard } from "@/lib/x-card";
 import { getTrips } from "@/lib/travel";
+import { getPublishedPosts } from "@/lib/posts";
 
 // Start the studio's downloads with the HTML, instead of after the three.js chunk loads and asks for them. (Images
 // too: they're fetched and decoded as ImageBitmaps, not <img>s.) Each screen size only preloads its own set.
@@ -28,7 +29,7 @@ export default async function HomePage() {
   return (
     <>
       <StageLoader links={{ github, x, linkedin }} />
-      <HomeSections projects={projects} trips={getTrips()} />
+      <HomeSections projects={projects} trips={getTrips()} posts={getPublishedPosts()} />
     </>
   );
 }

@@ -9,7 +9,7 @@ const CharacterStage = dynamic(() => import("./character-stage").then((m) => m.C
 
 export function StageLoader({ links }: { links: LinkData }) {
   return (
-    <section className="stage">
+    <section id="top" className="stage">
       <CharacterStage />
       <IntroCopy data={links} />
     </section>

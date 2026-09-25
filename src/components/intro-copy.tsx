@@ -1,4 +1,4 @@
-import { Geist } from "next/font/google";
+import { geist } from "@/lib/fonts";
 import type { GitHubCard as GitHubData } from "@/lib/github-card";
 import type { LinkedInCard as LinkedInData } from "@/lib/linkedin-card";
 import type { XCard as XData } from "@/lib/x-card";
@@ -6,8 +6,6 @@ import { site } from "@/lib/site";
 import { HoverCard } from "./hover-card";
 import { HoverList, type HoverItem } from "./hover-list";
 import { GitHubCard, LinkedInCard, MailCard, PdfCard, SiteCard, XCard } from "./link-cards";
-
-const geist = Geist({ subsets: ["latin"], weight: ["400"] });
 
 const AVATAR = "/media/avatar.jpg";
 const RESUME_PREVIEW = "/media/resume-preview.jpg";
@@ -80,6 +78,10 @@ export function IntroCopy({ data }: { data: LinkData }) {
         ,{" "}
         <a href="#projects" data-cuelume-hover="tick">
           projects
+        </a>
+        ,{" "}
+        <a href="#writing" data-cuelume-hover="tick">
+          writing
         </a>
         ,{" "}
         <a href="#photos" data-cuelume-hover="tick">

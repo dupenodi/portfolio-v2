@@ -45,11 +45,6 @@ function useFlash(ms: number) {
 }
 
 const ICON = {
-  location:
-    "M11.536 3.464a5 5 0 0 1 0 7.072L8 14.07l-3.536-3.535a5 5 0 1 1 7.072-7.072v.001Zm1.06 8.132a6.5 6.5 0 1 0-9.192 0l3.535 3.536a1.5 1.5 0 0 0 2.122 0l3.535-3.536ZM8 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z",
-  people:
-    "M2 5.5a3.5 3.5 0 1 1 5.898 2.549 5.508 5.508 0 0 1 3.034 4.084.75.75 0 1 1-1.482.235 4 4 0 0 0-7.9 0 .75.75 0 0 1-1.482-.236A5.507 5.507 0 0 1 3.102 8.05 3.493 3.493 0 0 1 2 5.5ZM11 4a3.001 3.001 0 0 1 2.22 5.018 5.01 5.01 0 0 1 2.56 3.012.749.749 0 0 1-.885.954.752.752 0 0 1-.549-.514 3.507 3.507 0 0 0-2.522-2.372.75.75 0 0 1-.574-.73v-.352a.75.75 0 0 1 .416-.672A1.5 1.5 0 0 0 11 5.5.75.75 0 0 1 11 4Zm-5.5-.5a2 2 0 1 0-.001 3.999A2 2 0 0 0 5.5 3.5Z",
-  repo: "M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z",
   linkedin:
     "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
   send: "M2.01 21 23 12 2.01 3 2 10l15 2-15 2z",
@@ -287,27 +282,16 @@ export function GitHubCard({ data }: { data: GitHubData }) {
     <a href={profile} {...external} className="gh-card">
       <div className="gh-card-head">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={AVATAR} alt="" width={48} height={48} className="gh-card-avatar" />
+        <img src={AVATAR} alt="" width={32} height={32} className="gh-card-avatar" />
+        <div>
+          <p className="gh-card-name">
+            <strong>{data.login}</strong>
+          </p>
+          <p className="gh-card-meta">
+            <b>{data.followers}</b> followers · <b>{data.repos}</b> repos
+          </p>
+        </div>
       </div>
-      <p className="gh-card-name">
-        <strong>{data.name}</strong> <span>{data.login}</span>
-      </p>
-      <ul className="gh-card-meta">
-        {data.location && (
-          <li>
-            <Svg d={ICON.location} />
-            {data.location}
-          </li>
-        )}
-        <li>
-          <Svg d={ICON.people} />
-          <b>{data.followers}</b> followers · <b>{data.following}</b> following
-        </li>
-        <li>
-          <Svg d={ICON.repo} />
-          <b>{data.repos}</b> repositories
-        </li>
-      </ul>
       <div className="gh-card-graph">
         <p>{data.total.toLocaleString("en-US")} contributions in the last year</p>
         <Graph weeks={data.weeks} />
