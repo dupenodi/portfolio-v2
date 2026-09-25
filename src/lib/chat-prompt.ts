@@ -1,13 +1,15 @@
 import { getGitHubRepos } from "@/lib/github";
 import { site } from "@/lib/site";
-import { education, skillGroups, workItems } from "@/lib/work-items";
+import { getExperience } from "@/lib/experience";
+import { skillGroups } from "@/lib/work-items";
 
 // The system prompt for the phone chat: who Sharath is and how to text like him. Deliberately simple for now
 // (everything inline); a proper knowledge base can replace the facts section later.
 
 export async function chatSystemPrompt() {
-  const job = workItems[0];
-  const repos = await getGitHubRepos().catch(() => []);
+  const [repos, experience] = await Promise.all([getGitHubRepos().catch(() => []), getExperience()]);
+  const jobs = experience.filter((e) => e.kind === "work");
+  const study = experience.filter((e) => e.kind === "education");
   const projects = repos
     .map((r) => `- ${r.name}${r.description ? `: ${r.description}` : ""}${r.homepage ? ` (${r.homepage})` : ""}`)
     .join("\n");
@@ -23,10 +25,14 @@ How to write:
 
 Notes about Sharath:
 - ${site.description}
-- Based in ${site.location}. Role: ${job.role} at ${job.company} (${job.companyUrl}), ${job.period}.
+- Based in ${site.location}.
 - ${site.heroBio.text}
-${job.highlights.map((h) => `- ${h.title}: ${h.body}`).join("\n")}
-- Education: ${education.degree}, ${education.school}, ${education.location} (${education.period}).
+${jobs
+  .map((j) =>
+    [`- ${j.title} at ${j.org}${j.orgUrl ? ` (${j.orgUrl})` : ""}, ${j.period}.${j.summary ? ` ${j.summary}` : ""}`, ...j.highlights.map((h) => `- ${h.title}: ${h.body}`)].join("\n"),
+  )
+  .join("\n")}
+${study.map((e) => `- Education: ${e.title}, ${e.org}${e.location ? `, ${e.location}` : ""} (${e.period}).`).join("\n")}
 - Skills: ${skillGroups.map((g) => `${g.label}: ${g.items}`).join("; ")}.
 - Links: github ${site.github}, linkedin ${site.linkedin}, x ${site.twitterUrl}, resume ${site.url}${site.resumeUrl}, book a call ${site.calendly}.
 

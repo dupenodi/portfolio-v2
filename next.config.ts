@@ -11,10 +11,11 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      // Photos uploaded from /admin, served from the Supabase "photos" bucket.
       {
         protocol: "https",
-        hostname: "buymeachai.ezee.li",
-        pathname: "/assets/images/**",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/photos/**",
       },
     ],
   },
@@ -29,11 +30,6 @@ const nextConfig: NextConfig = {
         source: "/character/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
       },
-    ];
-  },
-  async rewrites() {
-    return [
-      { source: "/admin", destination: "/admin/index.html" },
     ];
   },
 };

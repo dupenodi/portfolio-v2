@@ -10,6 +10,7 @@
     "gtabid:booth": "node scripts/gtabid-booth.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.117.2",
     "@vercel/analytics": "^2.0.1",
     "cuelume": "^0.2.2",
     "gray-matter": "^4.0.3",

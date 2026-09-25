@@ -16,10 +16,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: PAGE_TONE_SCRIPT }} />
       </head>
       <body>
-        {/* Without scripts nothing fades in, so show the sections outright. */}
-        <noscript>
-          <style>{".reveal{opacity:1;transform:none}"}</style>
-        </noscript>
         {children}
       </body>
     </html>

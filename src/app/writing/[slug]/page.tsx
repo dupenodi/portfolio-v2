@@ -11,15 +11,16 @@ import { MDX } from "./mdx";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const dynamicParams = false;
+// Essays published from /admin after a deploy render on first visit, then stay cached until the next save.
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return getPublishedPosts().map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  return (await getPublishedPosts()).map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post || post.metadata.draft) return {};
   const url = absoluteUrl(`/writing/${slug}`);
   return {
@@ -34,10 +35,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // An essay: one narrow column in the room's own colour, so reading one feels like the lights stayed as you left them.
 export default async function EssayPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post || post.metadata.draft) notFound();
 
-  const { prev, next } = getAdjacentPosts(slug);
+  const { prev, next } = await getAdjacentPosts(slug);
   const jsonLd = blogPostingJsonLd({
     title: post.metadata.title,
     description: post.metadata.description,

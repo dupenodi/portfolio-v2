@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BuyMeAChai } from "@/retired/components/buy-me-a-chai";
 import { ContactAnchor } from "@/retired/components/contact-anchor";
 import { getContactLinks } from "@/lib/navigation";
 import { site } from "@/lib/site";
@@ -30,7 +29,6 @@ export function ContactLinks() {
       <a className="r-call" href={site.calendly} target="_blank" rel="noopener noreferrer">
         book a call
       </a>
-      <BuyMeAChai />
     </>
   );
 }
