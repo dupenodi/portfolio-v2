@@ -37,7 +37,7 @@ export const site = {
   twitter: "@dupenodi",
   twitterUrl: "https://x.com/dupenodi",
   github: "https://github.com/dupenodi",
-  linkedin: "https://www.linkedin.com/comm/in/sarath-donepudi/",
+  linkedin: "https://www.linkedin.com/in/sarath-donepudi/",
   linkedinApp: "linkedin://in/sarath-donepudi",
   keywords: [
     "Sharath Donepudi",

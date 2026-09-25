@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.1.130"],
   poweredByHeader: false,
   compress: true,
   images: {
@@ -20,17 +21,19 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+  // The studio's models and textures: served from cache for a day, then from cache while revalidating for a week,
+  // so a returning visitor's studio loads without a round trip per file.
+  async headers() {
+    return [
+      {
+        source: "/character/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+    ];
+  },
   async rewrites() {
     return [
       { source: "/admin", destination: "/admin/index.html" },
-    ];
-  },
-  async redirects() {
-    return [
-      { source: "/blog", destination: "/writing", permanent: true },
-      { source: "/blog/:slug", destination: "/writing/:slug", permanent: true },
-      { source: "/now", destination: "/", permanent: true },
-      { source: "/uses", destination: "/", permanent: true },
     ];
   },
 };

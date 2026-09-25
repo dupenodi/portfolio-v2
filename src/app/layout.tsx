@@ -1,54 +1,26 @@
-import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { JsonLd } from "@/components/json-ld";
-import { SiteShell } from "@/components/site-shell";
-import { createMetadata, personJsonLd, websiteJsonLd } from "@/lib/seo";
+import type { Metadata } from "next";
 import { site } from "@/lib/site";
+import { PAGE_TONE_SCRIPT } from "@/components/page-tone";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
-  display: "swap",
-  weight: ["300", "400", "500", "600"],
-  adjustFontFallback: true,
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-  display: "swap",
-  weight: ["300", "400", "500"],
-  adjustFontFallback: false,
-});
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-};
-
 export const metadata: Metadata = {
-  ...createMetadata({
-    title: site.name,
-    description: site.description,
-    path: "/",
-  }),
-  title: {
-    default: site.name,
-    template: `%s | ${site.name}`,
-  },
-  metadataBase: new URL(site.url),
+  title: site.name,
+  description: "Welcome.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${jetbrains.variable}`}>
-      <body className={bricolage.className}>
-        <JsonLd data={[personJsonLd(), websiteJsonLd()]} />
-        <SiteShell>{children}</SiteShell>
-        <Analytics />
+    // The script below sets the page's colour and ink on <html> before React hydrates.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: PAGE_TONE_SCRIPT }} />
+      </head>
+      <body>
+        {/* Without scripts nothing fades in, so show the sections outright. */}
+        <noscript>
+          <style>{".reveal{opacity:1;transform:none}"}</style>
+        </noscript>
+        {children}
       </body>
     </html>
   );
