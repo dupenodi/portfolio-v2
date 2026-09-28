@@ -24,7 +24,7 @@ function links({ github, x, linkedin }: LinkData): HoverItem[] {
       card: github ? <GitHubCard data={github} /> : undefined,
       warm: [AVATAR],
     },
-    { label: "linkedin", href: site.linkedin, width: 312, card: <LinkedInCard data={linkedin} />, warm: [linkedin.photo ?? AVATAR, "/media/niti-logo.png"] },
+    { label: "linkedin", href: site.linkedin, width: 312, card: <LinkedInCard data={linkedin} />, warm: [linkedin.photo ?? AVATAR, "/media/niti-logo-2.webp"] },
     { label: "x", href: site.twitterUrl, width: 300, card: <XCard data={x} />, warm: [x.avatar] },
   ];
 }
@@ -72,8 +72,8 @@ export function IntroCopy({ data }: { data: LinkData }) {
         aria-label="sections"
         style={{ color: "var(--ink-faint)", pointerEvents: "none" }}
       >
-        <a href="#work" data-cuelume-hover="tick">
-          work
+        <a href="#experience" data-cuelume-hover="tick">
+          experience
         </a>
         ,{" "}
         <a href="#projects" data-cuelume-hover="tick">

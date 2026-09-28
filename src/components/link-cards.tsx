@@ -60,10 +60,12 @@ const ICON = {
 };
 
 // ── niti.ai: a little browser window with the live site's homepage; the whole window opens the site ──
+// Without an href it's just the window (the projects' cursor preview, where the card under it is the link).
 
-export function SiteCard({ href, host, image, caption }: { href: string; host: string; image: string; caption: string }) {
+export function SiteCard({ href, host, image, caption }: { href?: string; host: string; image: string; caption?: string }) {
+  const Shell = href ? "a" : "div";
   return (
-    <a href={href} {...external} className="site-card">
+    <Shell {...(href ? { href, ...external } : {})} className="site-card">
       <div className="site-card-bar">
         <span className="window-dots">
           <i />
@@ -82,8 +84,8 @@ export function SiteCard({ href, host, image, caption }: { href: string; host: s
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={image} alt="" width={960} height={540} decoding="async" />
       </div>
-      <p className="site-card-caption">{caption}</p>
-    </a>
+      {caption ? <p className="site-card-caption">{caption}</p> : null}
+    </Shell>
   );
 }
 
@@ -397,7 +399,7 @@ export function LinkedInCard({ data }: { data: LinkedInData }) {
                 {niti ? (
                   <a href={site.companyUrl} {...external}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/media/niti-logo.png" alt="" width={20} height={20} className="li-card-org" />
+                    <img src="/media/niti-logo-2.webp" alt="" width={20} height={20} className="li-card-org" />
                     <span>{data.company}</span>
                   </a>
                 ) : (

@@ -1,5 +1,3 @@
-import { getGitHubUsername } from "@/lib/env";
-
 // What the hero's github hover card shows: the public profile and last year's contribution calendar.
 export type ContributionDay = { date: string; count: number; level: number };
 
@@ -17,12 +15,22 @@ export type GitHubCard = {
 
 const DAY = { next: { revalidate: 86400 } };
 
-export async function getGitHubCard(username = getGitHubUsername()): Promise<GitHubCard | null> {
+// The profile, with the token when there is one (a higher rate limit). A token that's expired or revoked makes github
+// refuse the request outright, so then it asks again without one: public profiles don't need it.
+async function fetchProfile(username: string) {
+  const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
+  const token = process.env.GITHUB_TOKEN?.trim();
+  if (token) {
+    const res = await fetch(`https://api.github.com/users/${username}`, { headers: { ...headers, Authorization: `Bearer ${token}` }, ...DAY });
+    if (res.status !== 401) return res;
+  }
+  return fetch(`https://api.github.com/users/${username}`, { headers, ...DAY });
+}
+
+export async function getGitHubCard(username = process.env.GITHUB_USERNAME ?? "dupenodi"): Promise<GitHubCard | null> {
   try {
-    const headers: HeadersInit = { Accept: "application/vnd.github+json" };
-    if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
     const [profileRes, calendarRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${username}`, { headers, ...DAY }),
+      fetchProfile(username),
       fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`, DAY),
     ]);
     if (!profileRes.ok || !calendarRes.ok) return null;

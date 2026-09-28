@@ -78,6 +78,9 @@ type FlagOptions = { print: string; width: number; height: number; cols: number;
 // How far apart the grommets hang, relative to the flag's width; under 1 lets the top edge sag
 // and pulls diagonal tension folds out of the corners.
 const SPREAD = 0.985;
+// How far a pulled point may get from each hanging corner, as a multiple of its distance across the flat fabric.
+// A little give (polyester stretches a few percent), no more: past this the pointer drags on, the cloth stays put.
+const MAX_STRETCH = 1.08;
 
 // Verlet cloth flag hung by its two top-corner grommets on wires: gravity, a slow indoor draft,
 // wall collision, and a grab handle so the pointer can pull it around.
@@ -106,6 +109,9 @@ export class ClothFlag {
   private readonly disposables: { dispose(): void }[] = [];
   // Grommets in the free bottom corners ride on the cloth: [grommet, corner vertex, diagonal neighbour, blend].
   private readonly looseGrommets: [THREE.Mesh, number, number, number][] = [];
+  // Each particle's spot on the flat flag, and the corners it hangs from, for limiting how far a pull can reach.
+  private readonly flat: Float32Array;
+  private readonly corners: number[];
 
   constructor({ print: printUrl, width, height, cols, rows, standoff }: FlagOptions) {
     this.standoff = standoff;
@@ -121,6 +127,8 @@ export class ClothFlag {
         this.pos[i + 2] = standoff;
       }
     }
+
+    this.flat = this.pos.slice();
 
     // Structural, shear and bend links; bend links are soft so the cloth folds rather than bending like card.
     const links: number[] = [];
@@ -162,6 +170,7 @@ export class ClothFlag {
     const order = Array.from({ length: n }, (_, k) => k).sort((x, y) => colour[x] - colour[y] || x - y);
     // Hung by the two top corners.
     const corners = [idx(0, 0), idx(cols - 1, 0)];
+    this.corners = corners;
     for (const i of corners) this.pinned[i] = 1;
     const setupLinks = new Int32Array(n * 2);
     const rest = new Float32Array(n);
@@ -202,6 +211,8 @@ export class ClothFlag {
       shareA,
       shareB,
       index: geometry.index!.array as Uint16Array,
+      anchors: new Int32Array(corners),
+      tether: this.tetherLengths(),
     };
     this.clothId = studioWorker() ? addCloth(this.setup, (frame) => this.apply(frame)) : null;
 
@@ -299,7 +310,39 @@ export class ClothFlag {
     if (p) {
       // Pull a little off the wall too, so it lifts like fabric being picked up.
       p.z = Math.max(p.z, this.standoff + 0.08);
+      this.limitReach(p);
       this.grabTarget.copy(p);
+    }
+  }
+
+  // For every particle, the farthest it may get from each hanging corner: its distance across the flat fabric, plus
+  // the same small give a pull is allowed.
+  private tetherLengths() {
+    const out = new Float32Array(this.count * this.corners.length);
+    for (let i = 0; i < this.count; i++) {
+      this.corners.forEach((c, j) => {
+        out[i * this.corners.length + j] =
+          Math.hypot(this.flat[i * 3] - this.flat[c * 3], this.flat[i * 3 + 1] - this.flat[c * 3 + 1]) * MAX_STRETCH;
+      });
+    }
+    return out;
+  }
+
+  // Keep a pull within what the fabric can reach from both hanging corners (a few rounds settles both limits).
+  private limitReach(p: THREE.Vector3) {
+    const g = this.grabbed * 3;
+    for (let round = 0; round < 4; round++) {
+      for (const c of this.corners) {
+        const k = c * 3;
+        const reach = Math.hypot(this.flat[g] - this.flat[k], this.flat[g + 1] - this.flat[k + 1]) * MAX_STRETCH;
+        const dx = p.x - this.pos[k];
+        const dy = p.y - this.pos[k + 1];
+        const dz = p.z - this.pos[k + 2];
+        const d = Math.hypot(dx, dy, dz);
+        if (d > reach) p.set(this.pos[k] + (dx * reach) / d, this.pos[k + 1] + (dy * reach) / d, this.pos[k + 2] + (dz * reach) / d);
+      }
+      // Never through the wall behind it.
+      p.z = Math.max(p.z, 0.02);
     }
   }
 

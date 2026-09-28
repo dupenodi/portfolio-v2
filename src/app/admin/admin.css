@@ -481,13 +481,6 @@
   border-color: var(--muted);
 }
 
-.admin-drop input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
-
 .admin-photos[aria-busy="true"] .admin-photo-grid {
   opacity: 0.6;
 }
@@ -529,6 +522,127 @@
   font-weight: 500;
 }
 
+/* ── labels: the name, and any hint beside it on the same line ── */
+
+.admin-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.admin-label .admin-hint {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.admin-head .admin-note {
+  margin: 4px 0 0 !important;
+}
+
+.admin-grid.tight {
+  gap: 12px;
+}
+
+/* ── the save bar: one per form, pinned to the bottom of the window ── */
+
+.admin-savebar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px -40px 0;
+  padding: 12px 40px;
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.admin-savebar p {
+  flex: 1;
+  min-width: 0;
+  color: var(--muted);
+}
+
+.admin-savebar[data-tone="dirty"] p {
+  color: var(--fg);
+}
+
+.admin-savebar[data-tone="dirty"] p::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #d97706;
+  vertical-align: 1px;
+}
+
+.admin-savebar[data-tone="ok"] p {
+  color: var(--ok);
+}
+
+.admin-savebar[data-tone="error"] p {
+  color: var(--danger);
+}
+
+.admin-savebar-keys {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ── tables: the order column stays narrow and aligned ── */
+
+.admin-col-tools {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right !important;
+}
+
+.admin-order {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.admin-order button {
+  font-size: 15px;
+}
+
+.admin-row-link {
+  font-weight: 500;
+}
+
+.admin-sub-text {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-link.danger {
+  color: var(--danger);
+}
+
+.admin-inline-error {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* File inputs are covered by a button-looking label; the input itself is invisible but still focusable. */
+.admin-file {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.admin-drop {
+  gap: 4px;
+}
+
 /* ── small screens: the sidebar becomes a top bar ── */
 
 @media (max-width: 760px) {
@@ -564,8 +678,43 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .admin-savebar {
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+
+  .admin-savebar-keys {
+    display: none;
+  }
+
   .admin-table {
     display: block;
     overflow-x: auto;
   }
+}
+
+/* ── a project's picture ── */
+
+.admin-project-image {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.admin-project-image[aria-busy="true"] img {
+  opacity: 0.5;
+}
+
+.admin-project-image img {
+  width: min(100%, 420px);
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+.admin-project-image label {
+  position: relative;
+  cursor: pointer;
 }

@@ -29,7 +29,26 @@ const SNAPSHOT: LinkedInCard = {
   banner: null,
 };
 
-const UA = "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)";
+// Link-preview crawlers linkedin serves the public profile to. It rate-limits them one by one, so when one is turned
+// away (429, or its own 999) the next gets a try.
+const CRAWLERS = [
+  "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)",
+  "WhatsApp/2.23.20.0",
+  "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)",
+];
+
+// The first crawler's answer is cached for a day like the other cards; a retry after a refusal isn't cached, so a
+// rate limit doesn't pin the fallback in place for the day.
+async function fetchProfile(url: string) {
+  for (const [i, agent] of CRAWLERS.entries()) {
+    const res = await fetch(url, {
+      headers: { "User-Agent": agent, "Accept-Language": "en-US,en" },
+      ...(i === 0 ? { next: { revalidate: 86400 } } : { cache: "no-store" as const }),
+    });
+    if (res.ok) return res;
+  }
+  return null;
+}
 
 function decode(text: string) {
   // Linkedin double-escapes apostrophes (&amp;#39;), so unescape until nothing changes.
@@ -92,11 +111,8 @@ function person(html: string): Person | null {
 
 export async function getLinkedInCard(url = site.linkedin): Promise<LinkedInCard> {
   try {
-    const res = await fetch(url.replace("/comm/", "/"), {
-      headers: { "User-Agent": UA, "Accept-Language": "en-US,en" },
-      next: { revalidate: 86400 },
-    });
-    if (!res.ok) return SNAPSHOT;
+    const res = await fetchProfile(url.replace("/comm/", "/"));
+    if (!res) return SNAPSHOT;
     const html = await res.text();
     const description = meta(html, "og:description") ?? meta(html, "description") ?? "";
     if (!description && !person(html)) return SNAPSHOT;

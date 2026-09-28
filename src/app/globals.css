@@ -566,6 +566,54 @@ button[data-busy] {
   color: var(--ink);
 }
 
+/* The product itself, in a browser window that trails the cursor (see ProjectPeek). It never takes the pointer. */
+.hover-card.project-peek,
+.hover-card.project-peek[data-open] {
+  pointer-events: none;
+}
+
+.project-peek .pop-card {
+  transform-origin: 0 0;
+}
+
+.project-peek-shots {
+  display: grid;
+}
+
+.project-peek-shot {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.project-peek-shot[data-on] {
+  opacity: 1;
+}
+
+/* Touch screens have no cursor to trail, so the picture sits at the top of the card. */
+.project-shot {
+  display: none;
+}
+
+@media (hover: none) {
+  .project-shot {
+    display: block;
+    aspect-ratio: 16 / 9;
+    margin: -8px -10px 10px;
+    overflow: hidden;
+    border: 1px solid var(--ink-hair);
+    border-radius: 8px;
+  }
+
+  .project-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+}
+
 .projects-more {
   margin-top: 20px;
   padding: 8px 16px;
@@ -636,78 +684,43 @@ button[data-busy] {
   color: var(--ink-soft);
 }
 
-/* ── photos: prints on the table ── */
+/* ── photos: a plain grid; a click opens one full size ── */
 
 .trip + .trip {
   margin-top: 56px;
 }
 
-.prints {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-  margin-top: 1.4rem;
-  padding: 6px 4px 12px;
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.print {
-  position: relative;
-  width: 220px;
-  padding: 9px 9px 34px;
+.photo-grid button {
+  display: block;
+  width: 100%;
+  padding: 0;
   border: 0;
-  background: #fbfaf8;
-  box-shadow: 0 1px 1px rgba(40, 32, 20, 0.06), 0 8px 22px -10px rgba(40, 32, 20, 0.28);
-  transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--tilt));
-  cursor: grab;
-  user-select: none;
-  -webkit-user-select: none;
-  transition: transform 550ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 450ms ease;
+  background: none;
+  cursor: zoom-in;
 }
 
-.print:hover:not([data-held]),
-.print:focus-visible {
-  transform: translate(var(--x, 0), calc(var(--y, 0) - 4px)) rotate(0deg);
-  box-shadow: 0 1px 1px rgba(40, 32, 20, 0.06), 0 16px 32px -12px rgba(40, 32, 20, 0.32);
-  outline: none;
-}
-
-/* Picked up: it follows the hand exactly, lifted off the table. */
-.print[data-held] {
-  cursor: grabbing;
-  transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--tilt)) scale(1.04);
-  box-shadow: 0 2px 4px rgba(40, 32, 20, 0.08), 0 30px 50px -18px rgba(40, 32, 20, 0.45);
-  transition: transform 160ms linear, box-shadow 300ms ease;
-}
-
-@media (hover: hover) {
-  .print {
-    touch-action: none;
-  }
-}
-
-.print img {
+.photo-grid img {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 3 / 4;
+  border-radius: 6px;
   object-fit: cover;
-  background: #e9e6e0;
-  pointer-events: none;
+  background: color-mix(in srgb, var(--ink) 6%, var(--studio));
+  transition: opacity 200ms ease;
 }
 
-.hint {
-  margin-top: 28px !important;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: var(--ink-faint);
-}
-
-@media (hover: none) {
-  .hint {
-    display: none;
-  }
+.photo-grid button:hover img {
+  opacity: 0.9;
 }
 
 .lightbox {
@@ -1124,15 +1137,6 @@ button[data-busy] {
 
   .projects {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .prints {
-    gap: 14px;
-  }
-
-  .print {
-    width: calc(50% - 7px);
-    padding: 6px 6px 22px;
   }
 
   .closing {
@@ -1960,6 +1964,7 @@ button[data-busy] {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
   clip-path: inset(0 0 100% 0);
   scale: 1.1;
   translate: var(--drift, 0) 0;
@@ -2943,6 +2948,7 @@ button[data-busy] {
     opacity: 1;
     transition: opacity 160ms ease;
   }
+
 
   [data-active] .gh-card-graph rect {
     animation: none;

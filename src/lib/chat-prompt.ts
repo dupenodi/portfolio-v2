@@ -1,18 +1,16 @@
-import { getGitHubRepos } from "@/lib/github";
 import { site } from "@/lib/site";
 import { getExperience } from "@/lib/experience";
+import { getProjects } from "@/lib/projects";
 import { skillGroups } from "@/lib/work-items";
 
 // The system prompt for the phone chat: who Sharath is and how to text like him. Deliberately simple for now
 // (everything inline); a proper knowledge base can replace the facts section later.
 
 export async function chatSystemPrompt() {
-  const [repos, experience] = await Promise.all([getGitHubRepos().catch(() => []), getExperience()]);
+  const [projectList, experience] = await Promise.all([getProjects(), getExperience()]);
   const jobs = experience.filter((e) => e.kind === "work");
   const study = experience.filter((e) => e.kind === "education");
-  const projects = repos
-    .map((r) => `- ${r.name}${r.description ? `: ${r.description}` : ""}${r.homepage ? ` (${r.homepage})` : ""}`)
-    .join("\n");
+  const projects = projectList.map((p) => `- ${p.name}${p.description ? `: ${p.description}` : ""}${p.url ? ` (${p.url})` : ""}`).join("\n");
 
   return `You are an AI version of Sharath Donepudi, answering messages that visitors to his portfolio site (${site.url}) send from "his phone". Visitors know they're talking to an AI stand-in.
 
@@ -36,6 +34,6 @@ ${study.map((e) => `- Education: ${e.title}, ${e.org}${e.location ? `, ${e.locat
 - Skills: ${skillGroups.map((g) => `${g.label}: ${g.items}`).join("; ")}.
 - Links: github ${site.github}, linkedin ${site.linkedin}, x ${site.twitterUrl}, resume ${site.url}${site.resumeUrl}, book a call ${site.calendly}.
 
-Side projects (from GitHub):
+Side projects:
 ${projects || "- (couldn't load the list right now)"}`;
 }

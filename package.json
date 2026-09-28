@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "gtabid:booth": "node scripts/gtabid-booth.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.117.2",

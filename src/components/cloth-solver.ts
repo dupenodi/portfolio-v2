@@ -12,6 +12,10 @@ export type ClothSetup = {
   shareB: Float32Array;
   // Triangles, for the normals.
   index: Uint16Array | Uint32Array;
+  // Tethers: the pinned particles, and for each particle its longest allowed distance to each of them (row per
+  // particle). Pulling on the cloth can't stretch it past these, however hard or far the pointer goes.
+  anchors: Int32Array;
+  tether: Float32Array;
 };
 
 const STEP = 1 / 90;
@@ -104,6 +108,7 @@ export class ClothSolver {
         pos[kb + 1] -= dy * cb;
         pos[kb + 2] -= dz * cb;
       }
+      this.tethers();
       // Keep the cloth in front of the wall.
       for (let k = 2; k < pos.length; k += 3) if (pos[k] < 0.006) pos[k] = 0.006;
     }
@@ -115,6 +120,30 @@ export class ClothSolver {
       sum += Math.hypot(pos[k] - prev[k], pos[k + 1] - prev[k + 1], pos[k + 2] - prev[k + 2]);
     }
     this.motionSum = (sum / Math.max(samples, 1)) / dt;
+  }
+
+  // Pull any particle that's drifted too far from a hanging point straight back to its tether length.
+  private tethers() {
+    const { pos } = this;
+    const { anchors, tether, pinned } = this.s;
+    const n = anchors.length;
+    for (let i = 0; i < this.count; i++) {
+      if (pinned[i]) continue;
+      const k = i * 3;
+      for (let j = 0; j < n; j++) {
+        const a = anchors[j] * 3;
+        const dx = pos[k] - pos[a];
+        const dy = pos[k + 1] - pos[a + 1];
+        const dz = pos[k + 2] - pos[a + 2];
+        const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        const max = tether[i * n + j];
+        if (d <= max) continue;
+        const f = max / d;
+        pos[k] = pos[a] + dx * f;
+        pos[k + 1] = pos[a + 1] + dy * f;
+        pos[k + 2] = pos[a + 2] + dz * f;
+      }
+    }
   }
 
   // Area-weighted vertex normals, as three's computeVertexNormals.

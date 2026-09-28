@@ -2,13 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { adminDb } from "@/lib/supabase";
 import { deletePost, savePost } from "../../../actions";
-import { ConfirmButton } from "../../../ui";
+import { AdminForm, ConfirmButton, Label } from "../../../ui";
 
 // ISO timestamp → the value a datetime-local input wants, in UTC.
-const forInput = (iso: string) => iso.slice(0, 16);
+const forInput = (iso: string) => new Date(iso).toISOString().slice(0, 16);
 
-export default async function PostEdit({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string }> }) {
-  const [{ id }, { saved }] = await Promise.all([params, searchParams]);
+export default async function PostEdit({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const isNew = id === "new";
   const { data: post } = isNew ? { data: null } : await adminDb().from("posts").select("*").eq("id", id).maybeSingle();
   if (!isNew && !post) notFound();
@@ -24,52 +24,46 @@ export default async function PostEdit({ params, searchParams }: { params: Promi
             </a>
           ) : null}
           <Link href="/admin/writing" className="admin-link">
-            ← back
+            ← all writing
           </Link>
         </div>
       </header>
-      {saved ? <p className="admin-saved">saved.</p> : null}
-      <form action={savePost} className="admin-form wide">
+      <AdminForm action={savePost}>
         {post ? <input type="hidden" name="id" value={post.id} /> : null}
         <div className="admin-grid">
           <label>
-            title
+            <Label>title</Label>
             <input name="title" defaultValue={post?.title ?? ""} required />
           </label>
           <label>
-            slug
-            <input name="slug" defaultValue={post?.slug ?? ""} placeholder="lowercase-with-hyphens" pattern="[a-z0-9]+(-[a-z0-9]+)*" required />
+            <Label hint="the address: /writing/…">slug</Label>
+            <input name="slug" defaultValue={post?.slug ?? ""} pattern="[a-z0-9]+(-[a-z0-9]+)*" required />
           </label>
           <label>
-            date (utc)
+            <Label hint="utc">date</Label>
             <input name="published_at" type="datetime-local" defaultValue={post ? forInput(post.published_at) : forInput(new Date().toISOString())} />
           </label>
           <label>
-            tags
-            <input name="tags" defaultValue={post?.tags?.join(", ") ?? ""} placeholder="comma, separated" />
+            <Label hint="comma separated">tags</Label>
+            <input name="tags" defaultValue={post?.tags?.join(", ") ?? ""} />
           </label>
         </div>
         <label>
-          description
-          <textarea name="description" rows={2} defaultValue={post?.description ?? ""} placeholder="one or two sentences; used in the list, rss and link previews" />
+          <Label hint="the list, rss and link previews">description</Label>
+          <textarea name="description" rows={2} defaultValue={post?.description ?? ""} />
         </label>
         <label>
-          what it covers <span className="admin-hint">one per line, optional</span>
+          <Label hint="one per line; optional">what it covers</Label>
           <textarea name="answers" rows={2} defaultValue={post?.answers?.join("\n") ?? ""} />
         </label>
         <label>
-          body <span className="admin-hint">markdown / mdx</span>
+          <Label hint="markdown / mdx">body</Label>
           <textarea name="body" rows={24} className="admin-code" defaultValue={post?.body ?? ""} />
         </label>
         <label className="admin-check">
           <input type="checkbox" name="draft" defaultChecked={post?.draft ?? true} /> draft (hidden from the site)
         </label>
-        <div className="admin-actions">
-          <button type="submit" className="admin-button primary">
-            save
-          </button>
-        </div>
-      </form>
+      </AdminForm>
       {post ? (
         <form action={deletePost.bind(null, post.id)} className="admin-danger-zone">
           <ConfirmButton message={`delete "${post.title}" for good?`}>delete essay</ConfirmButton>

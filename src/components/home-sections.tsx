@@ -1,44 +1,15 @@
 import Link from "next/link";
 import type { Experience } from "@/lib/experience";
-import type { GitHubRepo } from "@/lib/github";
 import { formatPostDate, formatTripDates } from "@/lib/format";
 import type { Post } from "@/lib/posts";
+import type { Project } from "@/lib/projects";
 import { geist } from "@/lib/fonts";
 import { site } from "@/lib/site";
 import type { Trip } from "@/lib/travel";
 import { CopyEmail } from "./copy-email";
-import { PhotoPrints } from "./photo-prints";
-import { ProjectGrid, type ProjectRow } from "./project-grid";
+import { PhotoGrid } from "./photo-grid";
+import { ProjectGrid } from "./project-grid";
 import { SectionIndex } from "./section-index";
-
-// First sentence of a repo description, lowercased to match the rest of the page.
-function blurb(description: string | null) {
-  if (!description) return "";
-  const first = description.trim().split(/(?<=[.!?])\s|\s—\s/)[0].replace(/[.!?]$/, "");
-  const cut = first.length > 118 ? `${first.slice(0, 118).replace(/[\s,]+\S*$/, "")}…` : first;
-  return cut.toLowerCase();
-}
-
-function liveHref(homepage: string | null) {
-  const value = homepage?.trim();
-  if (!value) return undefined;
-  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
-}
-
-function projectRows(repos: GitHubRepo[]): ProjectRow[] {
-  return repos.map((repo) => {
-    const live = liveHref(repo.homepage);
-    return {
-      id: repo.id,
-      name: repo.name.toLowerCase(),
-      href: live ?? repo.html_url,
-      source: live ? repo.html_url : undefined,
-      blurb: blurb(repo.description),
-      language: repo.language?.toLowerCase() ?? null,
-      year: new Date(repo.created_at).getFullYear(),
-    };
-  });
-}
 
 const external = { target: "_blank", rel: "noreferrer" } as const;
 
@@ -50,7 +21,7 @@ export function HomeSections({
   trips,
 }: {
   experience: Experience[];
-  projects: GitHubRepo[];
+  projects: Project[];
   posts: Post[];
   trips: Trip[];
 }) {
@@ -110,7 +81,7 @@ export function HomeSections({
         <section id="projects" className="block">
           <h2 className="label">projects</h2>
           <div className="block-body wide">
-            <ProjectGrid projects={projectRows(projects)} />
+            <ProjectGrid projects={projects} />
           </div>
         </section>
       ) : null}
@@ -144,10 +115,9 @@ export function HomeSections({
                   <span>{trip.place}</span>
                   <span className="meta">{formatTripDates(trip.date, trip.endDate)}</span>
                 </p>
-                <PhotoPrints photos={trip.photos} caption={trip.place} />
+                <PhotoGrid photos={trip.photos} caption={trip.place} />
               </div>
             ))}
-            <p className="hint">prints can be picked up and moved around.</p>
           </div>
         </section>
       ) : null}

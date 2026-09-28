@@ -29,7 +29,7 @@ import { AdaptiveResolution } from "./adaptive-resolution";
 import { SMALL_SCREEN, sized } from "./studio-assets";
 import { PhoneChat } from "./phone-chat";
 import { PaintingView } from "./painting-view";
-import { Lantern, PictureLight, GLOWS, SunsetGlow, lightingAt, type Glow, type Daylight, type Mode } from "./daylight";
+import { Lantern, PictureLight, lightingAt, type Daylight, type Mode } from "./daylight";
 import { pageToneFor, setPageTone, toneKey } from "./page-tone";
 
 const STUDIO = 0xf4f3f0;
@@ -69,8 +69,6 @@ const SOFA_X = 0.45;
 const FLOOR_X = -1.35;
 // Where he sits: under the painting, 3.38 m back from the middle of the floor (the wall is placed against him).
 const SEAT = new THREE.Vector3(FLOOR_X, 0, -3.38);
-// The sunset glow's radius on the wall.
-const GLOW_RADIUS = 1.05;
 
 // Camera orbits him when dragged, within limits so the wall always fills the background. Raised to look down
 // ~20° so the open floor between him and the camera stays visible; aimed a little toward him along the wall.
@@ -317,30 +315,14 @@ export function CharacterStage() {
     const sofa = new Sofa();
     sofa.group.position.set(SOFA_X, 0, 0.45);
     wall.add(sofa.group);
-    // At night, a sunset lamp's glow on the wall behind the sofa (the lamp itself is out of shot, across the room).
-    const glowAim = new THREE.Object3D();
-    glowAim.position.set(SOFA_X, 1.7, 0);
-    wall.add(glowAim);
-    const savedGlow = (() => {
-      try {
-        const g = localStorage.getItem("studio-glow");
-        return g && g in GLOWS ? (g as Glow) : "sunset";
-      } catch {
-        return "sunset";
-      }
-    })();
-    const sunsetGlow = new SunsetGlow(new THREE.Vector3(SOFA_X + 0.3, 1.1, 5.2), glowAim, GLOW_RADIUS, savedGlow);
-    wall.add(sunsetGlow.spot);
-    // The three night lights (lantern, picture light, sunset lamp) are left out of the scene altogether while
-    // they're all dark: three shades every pixel for every light, lit or not, and the sunset lamp's includes a
-    // shadow lookup.
+    // The two night lights (lantern, picture light) are left out of the scene altogether while they're both dark:
+    // three shades every pixel for every light, lit or not.
     let nightLights = true;
     const setNightLights = (on: boolean) => {
       if (on === nightLights) return;
       nightLights = on;
       lantern.light.visible = on;
       pictureLight.spot.visible = on;
-      sunsetGlow.spot.visible = on;
     };
     const plant = new Plant();
     plant.group.position.set(2.2, 0, 0.36);
@@ -372,7 +354,6 @@ export function CharacterStage() {
       scene.environmentIntensity = d.env;
       renderer.toneMappingExposure = d.exposure;
       autoLamps = d.lamps;
-      sunsetGlow.setGlow(d.lamps);
     };
     // The lamps follow the mode unless someone has clicked them on or off.
     let autoLamps = 0;
@@ -459,7 +440,7 @@ export function CharacterStage() {
       rows: 30,
       standoff: 0.07,
     });
-    flag.group.position.set(2.25, 2.35, 0);
+    flag.group.position.set(1.55, 2.35, 0);
     wall.add(flag.group);
 
     // Post: multisampled HDR render -> tone map -> finish. (No screen-space AO: it isn't antialiased and left
@@ -870,12 +851,6 @@ export function CharacterStage() {
           ["pictureLight", ray.intersectObject(pictureLightHit, false)[0]],
           ["plant", ray.intersectObject(plant.group, true)[0]],
         ];
-        // The sunset glow on the wall, at night: click it for another gradient.
-        if (darkness > 0.5) {
-          const centre = glowAim.getWorldPosition(new THREE.Vector3());
-          const point = ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), -centre.z), new THREE.Vector3());
-          if (point && point.distanceTo(centre) < GLOW_RADIUS) hits.push(["glow", { distance: point.distanceTo(ray.ray.origin), point, object: wall }]);
-        }
         hits.push(["phone", ray.intersectObject(phone.hitArea, false)[0]]);
         hits.push(["him", pickHim(ray.ray)]);
         let best: { what: string; hit: THREE.Intersection } | null = null;
@@ -911,12 +886,14 @@ export function CharacterStage() {
         setTimeout(() => say(pick(lines)), delay);
       };
       const toggleLamp = (which: "lantern" | "picture") => {
-        const on = (which === "lantern" ? lanternLevel : pictureLevel) < 0.5;
+        const levels = { lantern: lanternLevel, picture: pictureLevel };
+        const on = levels[which] < 0.5;
         lampOverride[which] = on;
         sound.click(on);
         // Paper lanterns take a moment to catch: the bulb stutters on.
         if (which === "lantern" && on) flickerUntil = performance.now() + 450;
-        const dark = autoLamps > 0.5 && !on && (which === "lantern" ? pictureLevel : lanternLevel) < 0.5;
+        // The last one off, while it's night: he notices.
+        const dark = autoLamps > 0.5 && !on && Object.entries(levels).every(([k, v]) => k === which || v < 0.5);
         if (dark) remark(LINES.lampOff, 600, 0.6);
       };
       // Pushing the lantern rocks it away from you; `strength` in rad/s.
@@ -940,14 +917,6 @@ export function CharacterStage() {
         const found = pick3d(e);
         if (!found) return;
         if (found.what === "phone") return openChat();
-        if (found.what === "glow") {
-          const glow = sunsetGlow.next();
-          sound.click(true);
-          try {
-            localStorage.setItem("studio-glow", glow);
-          } catch {}
-          return;
-        }
         if (found.what === "lantern") {
           knockLantern(rayFrom(e).ray.direction.clone().setY(0).normalize(), 0.35);
           return toggleLamp("lantern");
@@ -1178,7 +1147,7 @@ export function CharacterStage() {
         }
         if (easeLamps(dt)) lightChanging = true;
         if (lightChanging) retoneWanted = true;
-        setNightLights(lanternLevel > 0.001 || pictureLevel > 0.001 || sunsetGlow.spot.intensity > 0.001);
+        setNightLights(lanternLevel > 0.001 || pictureLevel > 0.001);
         // Re-match the page once the light has settled: every change to the page's colour restyles and repaints the
         // whole document, which dropped frames when it ran several times a second through a fade.
         // Not while the studio is still fading in from the page's colour: that's what the read would see.
@@ -1190,10 +1159,6 @@ export function CharacterStage() {
           propShadow.render(renderer, scene, PROPS_LAYER, propShadowCentre);
         }
         renderer.shadowMap.needsUpdate = true;
-        // The sunset lamp's shadow map only carries its projection: don't redraw it while the lamp is off (once
-        // it exists; a light skipped before its first shadow render has no map to sample, and draws fail).
-        const glowShadow = sunsetGlow.spot.shadow;
-        glowShadow.autoUpdate = sunsetGlow.spot.intensity > 0 || glowShadow.map === null;
         finish.uniforms.time.value = sceneTime;
         // Fade in over ~0.9 s, eased.
         finish.uniforms.reveal.value = THREE.MathUtils.smoothstep(sceneTime, 0, 0.9);
@@ -1217,7 +1182,6 @@ export function CharacterStage() {
       removeEventListener("pointerdown", onFirstGesture);
       removeEventListener("keydown", onFirstGesture);
       sound.dispose();
-      sunsetGlow.dispose();
       phone.dispose();
       mount.removeEventListener("pointerdown", onPointerDown);
       mount.removeEventListener("pointermove", onPointerMove);

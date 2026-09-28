@@ -1,66 +1,52 @@
-import { getGitHubRepos } from "@/lib/github";
+import Link from "next/link";
 import { adminDb } from "@/lib/supabase";
-import { saveProject } from "../../actions";
+import { moveProject } from "../../actions";
+import { OrderButtons } from "../order-buttons";
 
-// Repos come from GitHub (the ones tagged for the portfolio). Here they can be hidden, ordered, or described differently.
-export default async function Projects() {
-  const [repos, { data }] = await Promise.all([getGitHubRepos(), adminDb().from("project_settings").select("*")]);
-  const settings = new Map((data ?? []).map((s) => [s.repo_name as string, s]));
-
+export default async function ProjectList() {
+  const { data } = await adminDb().from("projects").select("id, name, image, year, published").order("sort");
+  const rows = data ?? [];
   return (
     <>
       <header className="admin-head">
-        <h1>projects</h1>
+        <div>
+          <h1>projects</h1>
+          <p className="admin-note">shown on the site in this order; hidden ones stay here for later.</p>
+        </div>
+        <Link href="/admin/projects/new" className="admin-button primary">
+          add
+        </Link>
       </header>
-      <p className="admin-note">
-        pulled from github. order: lower numbers first, blanks after in github&apos;s order. a description here replaces
-        the repo&apos;s.
-      </p>
       <table className="admin-table">
         <thead>
           <tr>
-            <th>repo</th>
-            <th>order</th>
-            <th>description on the site</th>
-            <th>hide</th>
-            <th />
+            <th>name</th>
+            <th>picture</th>
+            <th>year</th>
+            <th>status</th>
+            <th className="admin-col-tools">order</th>
           </tr>
         </thead>
         <tbody>
-          {repos.map((r) => {
-            const s = settings.get(r.name);
-            const form = `project-${r.id}`;
-            return (
-              <tr key={r.id} data-muted={s?.hidden || undefined}>
-                <td>
-                  <a href={r.html_url} target="_blank" rel="noreferrer">
-                    {r.name}
-                  </a>
-                  <form id={form} action={saveProject}>
-                    <input type="hidden" name="repo_name" value={r.name} />
-                  </form>
-                </td>
-                <td>
-                  <input form={form} name="sort" type="number" defaultValue={s?.sort ?? ""} className="admin-narrow" aria-label="order" />
-                </td>
-                <td>
-                  <input form={form} name="blurb" defaultValue={s?.blurb ?? ""} placeholder={r.description ?? ""} aria-label="description" />
-                </td>
-                <td>
-                  <input form={form} name="hidden" type="checkbox" defaultChecked={s?.hidden ?? false} aria-label="hide" />
-                </td>
-                <td>
-                  <button form={form} type="submit" className="admin-button">
-                    save
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-          {repos.length === 0 ? (
+          {rows.map((r, i) => (
+            <tr key={r.id}>
+              <td>
+                <Link href={`/admin/projects/${r.id}`} className="admin-row-link">
+                  {r.name}
+                </Link>
+              </td>
+              <td>{r.image ? "yes" : "—"}</td>
+              <td>{r.year ?? "—"}</td>
+              <td>{r.published ? <span className="admin-pill live">shown</span> : <span className="admin-pill">hidden</span>}</td>
+              <td className="admin-col-tools">
+                <OrderButtons up={moveProject.bind(null, r.id, -1)} down={moveProject.bind(null, r.id, 1)} first={i === 0} last={i === rows.length - 1} />
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 ? (
             <tr>
               <td colSpan={5} className="admin-empty">
-                no repos came back from github.
+                nothing yet.
               </td>
             </tr>
           ) : null}

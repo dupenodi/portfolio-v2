@@ -19,6 +19,7 @@ const _full = new THREE.Quaternion();
 const _from = new THREE.Vector3();
 const _to = new THREE.Vector3();
 const _pos = new THREE.Vector3();
+const _target = new THREE.Vector3();
 
 // Rotate a bone by a world-space rotation about its own pivot, then refresh it and its children.
 function rotateWorld(bone: THREE.Object3D, turn: THREE.Quaternion) {
@@ -41,7 +42,13 @@ const find = (root: THREE.Object3D, re: RegExp) => {
   return hit as THREE.Object3D | null;
 };
 
+// How far he'll turn to look, from straight ahead (+z, away from the wall at his back), in radians. Looking up
+// tips the head back toward the wall; these keep the back of his head off it (measured against the skinned mesh).
+export type LookLimits = { up: number; down: number; side: number };
+
 export class CharacterLife {
+  limits: LookLimits = { up: 0.28, down: 0.6, side: 1.05 };
+
   /** Current share of the pose given to looking at `lookAt` (eased toward the requested amount). */
   gaze = 0;
   /** 0 awake, 1 fast asleep. */
@@ -53,6 +60,7 @@ export class CharacterLife {
   private head: THREE.Object3D;
   private bones: THREE.Object3D[];
   private base: THREE.Quaternion[];
+  private applied = false;
   // The face's forward direction in the head bone's own frame, measured in the bind pose (facing +z).
   private faceLocal = new THREE.Vector3();
   private look = new THREE.Vector3();
@@ -82,6 +90,9 @@ export class CharacterLife {
 
   /** Call before `mixer.update`: undo last frame's offsets. */
   restore() {
+    // Nothing to undo before the first `apply`. (The rotations saved at construction are the rig's bind pose, not
+    // the clip's; restoring those would throw away the seated pose's spine and head and tip him into the wall.)
+    if (!this.applied) return;
     this.bones.forEach((b, i) => b.quaternion.copy(this.base[i]));
   }
 
@@ -114,6 +125,7 @@ export class CharacterLife {
   ) {
     // Remember the clip's pose for `restore()`.
     this.bones.forEach((b, i) => this.base[i].copy(b.quaternion));
+    this.applied = true;
 
     // Nodding off is slow; waking up is a start.
     const sleepRate = opts.sleep > this.sleep ? 0.45 : 5;
@@ -121,12 +133,13 @@ export class CharacterLife {
     const sleepy = THREE.MathUtils.smoothstep(this.sleep, 0, 1);
     this.gaze += (opts.gaze * (1 - sleepy) - this.gaze) * (1 - Math.exp(-dt * 3));
 
-    // Eyes lead, the head follows a beat behind.
+    // Eyes lead, the head follows a beat behind; the target is first kept inside what his neck can reach.
+    this.clampLook(opts.lookAt, _target);
     if (!this.lookReady) {
-      this.look.copy(opts.lookAt);
+      this.look.copy(_target);
       this.lookReady = true;
     }
-    this.look.lerp(opts.lookAt, 1 - Math.exp(-dt * 5));
+    this.look.lerp(_target, 1 - Math.exp(-dt * 5));
 
     // Breathing: the chest rises and settles; deeper and slower when asleep.
     this.breath += (dt * Math.PI * 2) / THREE.MathUtils.lerp(4.2, 6.2, sleepy);
@@ -150,12 +163,24 @@ export class CharacterLife {
 
     this.joltVel += (-90 * this.jolt - 11 * this.joltVel) * dt;
     this.jolt += this.joltVel * dt;
+    // The recoil leans sideways, away from the poke, and turns the head. No leaning back or twisting the chest:
+    // his back is flat against the wall, and either would push a shoulder or his head into it.
     if (Math.abs(this.jolt) > 1e-4 || Math.abs(this.joltVel) > 1e-3) {
-      rotateAxis(this.spine2, WORLD_Y, this.joltSide * 0.16 * this.jolt);
-      rotateAxis(this.spine2, WORLD_X, -0.08 * this.jolt);
+      rotateAxis(this.spine2, WORLD_Z, this.joltSide * 0.07 * this.jolt);
       rotateAxis(this.head, WORLD_Y, this.joltSide * 0.22 * this.jolt);
-      rotateAxis(this.head, WORLD_X, -0.12 * this.jolt);
+      rotateAxis(this.head, WORLD_Z, this.joltSide * 0.1 * this.jolt);
     }
+  }
+
+  // The same point, moved (keeping its distance) to within `limits` of straight ahead as seen from his head.
+  private clampLook(target: THREE.Vector3, out: THREE.Vector3) {
+    const head = this.head.getWorldPosition(_pos);
+    _to.copy(target).sub(head);
+    const dist = Math.max(_to.length(), 0.3);
+    const yaw = THREE.MathUtils.clamp(Math.atan2(_to.x, _to.z), -this.limits.side, this.limits.side);
+    const pitch = THREE.MathUtils.clamp(Math.atan2(_to.y, Math.hypot(_to.x, _to.z)), -this.limits.down, this.limits.up);
+    out.set(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch)).multiplyScalar(dist).add(head);
+    return out;
   }
 
   // Turn `bone` a fraction of the way toward pointing the face at the look target (never more than ~65°).

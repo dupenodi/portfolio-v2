@@ -1,9 +1,8 @@
 import * as THREE from "three";
 
 // Two looks for the studio. Light: soft morning sun raking through a window with a tree outside, long leafy
-// shadows across the floor and up the wall. Dark: ten at night, cool moonlight, the paper lantern, the picture
-// light and a sunset projection lamp glowing on the wall. `lightingAt(t)` blends them (0 light, 1 dark) so a
-// switch fades rather than cuts.
+// shadows across the floor and up the wall. Dark: ten at night, cool moonlight, the paper lantern and the light over
+// the painting. `lightingAt(t)` blends them (0 light, 1 dark) so a switch fades rather than cuts.
 
 export type Mode = "light" | "dark";
 
@@ -20,7 +19,7 @@ export type Daylight = {
   rimIntensity: number;
   env: number;
   exposure: number;
-  // Practical lamps (lantern, picture light, sunset lamp): 0 off, 1 fully on.
+  // Practical lamps (lantern, picture light): 0 off, 1 fully on.
   lamps: number;
 };
 
@@ -253,79 +252,5 @@ export class PictureLight {
   setGlow(v: number) {
     this.bulb.emissiveIntensity = 2.5 * v;
     this.spot.intensity = 2.2 * v;
-  }
-}
-
-// A sunset projection lamp's glow on the wall at night (the lamp itself is out of shot): a big soft disc in one
-// of a few gradients, centre to rim, clicked through by the visitor.
-export const GLOWS = {
-  // The classic: deep red-orange in the middle, warming out to a bright golden rim.
-  sunset: ["#ff4a24", "#ff6a2a", "#ff9a3a", "#ffc24e", "#ffd66a"],
-  // Golden halo: sunny yellow centre through orange to a pink rim.
-  halo: ["#ffe08a", "#ffc05a", "#ff9442", "#ff6a5a", "#ff5c86"],
-  // Rainbow: ice-blue centre, through blue and violet, to a hot pink rim.
-  rainbow: ["#9ff3ff", "#5ecbff", "#5a74ff", "#b84cff", "#ff4f9a"],
-} as const;
-export type Glow = keyof typeof GLOWS;
-
-function glowTexture(stops: readonly string[], size = 256) {
-  const c = document.createElement("canvas");
-  c.width = c.height = size;
-  const g = c.getContext("2d")!;
-  g.fillStyle = "#000";
-  g.fillRect(0, 0, size, size);
-  const r = size / 2;
-  const grad = g.createRadialGradient(r, r, 0, r, r, r * 0.9);
-  stops.forEach((colour, i) => grad.addColorStop((i / (stops.length - 1)) * 0.78, colour));
-  // The rim blooms out softly rather than stopping dead.
-  grad.addColorStop(0.88, "rgba(0,0,0,0.45)");
-  grad.addColorStop(1, "rgba(0,0,0,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, size, size);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-export class SunsetGlow {
-  spot: THREE.SpotLight;
-  glow: Glow;
-  private textures = Object.fromEntries(Object.entries(GLOWS).map(([k, stops]) => [k, glowTexture(stops)])) as Record<Glow, THREE.CanvasTexture>;
-
-  /**
-   * `from`: where the (unseen) lamp sits; `aim`: the disc's centre on the wall; `radius`: the disc's size there.
-   * The light is a real spot, so the room picks up the colour and anyone in front casts a shadow into it.
-   */
-  constructor(from: THREE.Vector3, aim: THREE.Object3D, radius: number, glow: Glow) {
-    this.glow = glow;
-    const distance = from.distanceTo(aim.position);
-    // The map fills the cone's square; the disc is drawn out to 90% of it.
-    const angle = Math.atan(radius / (0.9 * distance));
-    this.spot = new THREE.SpotLight(0xffffff, 0, 0, angle, 0.12, 0);
-    this.spot.position.copy(from);
-    this.spot.map = this.textures[glow];
-    // A projected map only works through the shadow machinery.
-    this.spot.castShadow = true;
-    this.spot.shadow.mapSize.setScalar(1024);
-    this.spot.shadow.bias = -0.0004;
-    this.spot.shadow.camera.near = 0.5;
-    this.spot.shadow.camera.far = distance + 2;
-    this.spot.target = aim;
-  }
-
-  /** Switch to the next gradient; returns its name. */
-  next() {
-    const names = Object.keys(GLOWS) as Glow[];
-    this.glow = names[(names.indexOf(this.glow) + 1) % names.length];
-    this.spot.map = this.textures[this.glow];
-    return this.glow;
-  }
-
-  setGlow(v: number) {
-    this.spot.intensity = 3.2 * v;
-  }
-
-  dispose() {
-    for (const t of Object.values(this.textures)) t.dispose();
   }
 }
