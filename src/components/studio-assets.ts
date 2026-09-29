@@ -18,5 +18,6 @@ export const sized = (small: boolean) => ({
 export const SHARED = [
   `${BASE}/decor/painting.glb`,
   `${BASE}/anims/Seated.glb`,
+  `${BASE}/anims/Landing.glb`,
   `${BASE}/decor/tweet-flag.webp`,
 ];

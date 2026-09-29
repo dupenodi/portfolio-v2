@@ -155,9 +155,9 @@ export class CharacterLife {
     }
 
     if (this.gaze > 0.001) {
-      // Spread the turn down the spine so it reads as the body following the eyes, not a swivelling head.
-      this.aim(this.spine2, 0.18);
-      this.aim(this.neck, 0.4);
+      // Neck and head only. The chest stays put: turning it swung his shoulders, and the arms and the hands resting on
+      // the floor with them.
+      this.aim(this.neck, 0.45);
       this.aim(this.head, 1);
     }
 

@@ -182,7 +182,11 @@ for (const file of files) {
   const contact = opening(times, lowest, JUMP / 2);
   const low = Math.min(...lowest);
   if (lowest[0] - low > FALLS_IN / toMetres) {
-    const landed = lowest.findIndex((y) => y < low + 0.05 / toMetres);
+    // Landed: the first frame the fall is over, i.e. nothing within the next jump's length goes much lower. (Not
+    // "near the clip's lowest point": that can be something later dipping under the floor, which would hold the
+    // whole landing at that dip's level.)
+    const settled = (i) => lowest.every((y, j) => j < i || times[j] - times[i] > JUMP || y > lowest[i] - 0.05 / toMetres);
+    const landed = lowest.findIndex((_, i) => settled(i));
     for (let i = 0; i < landed; i++) contact[i] = contact[landed];
   }
   // Keep the jumps; pin everything else to the floor.

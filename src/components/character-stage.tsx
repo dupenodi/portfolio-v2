@@ -50,6 +50,7 @@ const LINES = {
   wake: ["huh?", "i wasn't sleeping.", "five more minutes…", "oh. hi.", "i'm up, i'm up."],
   back: ["oh. you're back.", "welcome back.", "missed you."],
   lampOff: ["hey, who turned off the light?", "it's dark in here now."],
+  landed: ["ta-da.", "oh, hi. make yourself at home.", "nailed it.", "hello. i live here."],
   phone: [
     "that's my phone. go ahead, tap it.",
     "oh, a text. you can answer it.",
@@ -70,6 +71,12 @@ const FLOOR_X = -1.35;
 // Where he sits: under the painting, 3.38 m back from the middle of the floor (the wall is placed against him).
 const SEAT = new THREE.Vector3(FLOOR_X, 0, -3.38);
 
+// The landing (see scripts/intro-clips.mjs): he drops in from above the frame, lands, and sits down against the
+// wall. Held off-screen until the studio has mostly faded in. Seconds.
+const LANDING_DELAY = 0.5;
+// When his hand hits the floor.
+const TOUCHDOWN = 0.62;
+
 // Camera orbits him when dragged, within limits so the wall always fills the background. Raised to look down
 // ~20° so the open floor between him and the camera stays visible; aimed a little toward him along the wall.
 const CAMERA_TARGET = new THREE.Vector3(SEAT.x * 0.3, 0.75, -0.8 + SEAT.z * 0.6);
@@ -79,10 +86,16 @@ const BASE_AZIMUTH = 0.35;
 const MAX_AZIMUTH = 0.7;
 // Radians of orbit per pixel dragged, and how quickly a flick's spin dies out (per second).
 const DRAG_SPEED = 0.005;
+// Until someone has dragged the view once, a hint that it turns: the camera swings this far (radians) and back, once,
+// slowly, while a caption says so. Shown this long after he's settled, for this long (ms).
+const HINT_SWING = 0.11;
+const HINT_AFTER = 1800;
+const HINT_FOR = 5200;
 const SPIN_DAMPING = 4;
 
-// The seated pose (see scripts/seated-pose.mjs) stores the hips' horizontal position relative to their rest spot.
-function seatedPose(clip: THREE.AnimationClip, hipsRest: THREE.Vector3) {
+// The seated pose and the landing (see scripts/seated-pose.mjs, scripts/intro-clips.mjs) store the hips'
+// horizontal position relative to their rest spot.
+function anchorHips(clip: THREE.AnimationClip, hipsRest: THREE.Vector3) {
   const v = clip.tracks.find((t) => /hips\.position$/i.test(t.name))?.values;
   if (v) {
     v[0] += hipsRest.x;
@@ -139,6 +152,7 @@ export function CharacterStage() {
   }, [restoreFocus]);
   // First frame rendered: fade the canvas in from the page colour instead of popping.
   const [ready, setReady] = useState(false);
+  const [hint, setHint] = useState(false);
 
   useEffect(() => {
     const mount = mountRef.current!;
@@ -180,11 +194,13 @@ export function CharacterStage() {
     };
     fitCamera();
     let azimuth = BASE_AZIMUTH;
+    // The hint's swing, added to the azimuth (see HINT_SWING).
+    let swing = 0;
     const target = CAMERA_TARGET.clone();
     const aim = new THREE.Vector3();
     const placeCamera = () => {
       aim.copy(target).setY(target.y + (fit - 1) * 0.55);
-      camera.position.copy(CAMERA_OFFSET).multiplyScalar(fit).applyAxisAngle(THREE.Object3D.DEFAULT_UP, azimuth).add(aim);
+      camera.position.copy(CAMERA_OFFSET).multiplyScalar(fit).applyAxisAngle(THREE.Object3D.DEFAULT_UP, azimuth + swing).add(aim);
       camera.lookAt(aim);
       camera.updateMatrixWorld();
     };
@@ -346,6 +362,7 @@ export function CharacterStage() {
       key.color.copy(d.key);
       key.intensity = d.keyIntensity;
       key.position.set(d.keyX, d.keyY, 5.2);
+      key.shadow.intensity = d.keyShadow;
       hemi.color.copy(d.sky);
       hemi.groundColor.copy(d.ground);
       hemi.intensity = d.hemi;
@@ -577,6 +594,27 @@ export function CharacterStage() {
     };
     document.addEventListener("visibilitychange", onVisibility);
 
+    // The turn hint (see HINT_SWING): once he's settled, unless this visitor has turned the view before.
+    let hintStart = -1;
+    let hintTimer = 0;
+    const endHint = () => {
+      clearTimeout(hintTimer);
+      if (hintStart < 0) return;
+      hintStart = -1;
+      setHint(false);
+    };
+    const offerHint = () => {
+      try {
+        if (localStorage.getItem("studio-turned")) return;
+      } catch {}
+      hintTimer = window.setTimeout(() => {
+        if (disposed || dragging) return;
+        hintStart = performance.now();
+        setHint(true);
+        hintTimer = window.setTimeout(endHint, HINT_FOR);
+      }, HINT_AFTER);
+    };
+    const stillMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let dragging = false;
     let downX = 0;
     let downY = 0;
@@ -596,6 +634,7 @@ export function CharacterStage() {
         return;
       }
       dragging = true;
+      endHint();
       spin = 0;
       lastX = e.clientX;
       lastT = e.timeStamp;
@@ -609,6 +648,11 @@ export function CharacterStage() {
       }
       if (!dragging) return;
       const dx = e.clientX - lastX;
+      if (Math.abs(e.clientX - downX) > 12) {
+        try {
+          localStorage.setItem("studio-turned", "1");
+        } catch {}
+      }
       lastX = e.clientX;
       azimuth = THREE.MathUtils.clamp(azimuth - dx * DRAG_SPEED, BASE_AZIMUTH - MAX_AZIMUTH, BASE_AZIMUTH + MAX_AZIMUTH);
       spin = ((-dx * DRAG_SPEED) / Math.max(e.timeStamp - lastT, 8)) * 1000;
@@ -653,7 +697,7 @@ export function CharacterStage() {
       // Each asset's textures go up to the GPU as soon as it arrives (see `primeTextures`).
       const primed = <T,>(load: Promise<T>, root: (v: T) => THREE.Object3D | THREE.Texture) =>
         load.then(async (v) => (await primeTextures(renderer, root(v), aniso), v));
-      const [roughnessMap, , , , gltf, paintingGltf, , , poseGltf] = await Promise.all([
+      const [roughnessMap, , , , gltf, paintingGltf, , , poseGltf, landingGltf] = await Promise.all([
         primed(characterRoughnessMap(assets.roughness, aniso), (t) => t),
         flag.ready.then(() => primeTextures(renderer, flag.group, 16)),
         primed(sofa.load(loader, assets.sofa, aniso, SOFA_WIDTH), () => sofa.group),
@@ -663,6 +707,7 @@ export function CharacterStage() {
         floorTextures.ready,
         plaster.ready,
         loader.loadAsync(`${BASE}/anims/Seated.glb`),
+        loader.loadAsync(`${BASE}/anims/Landing.glb`),
       ]);
       if (disposed) return;
       for (const g of [sofa.group, plant.group, lantern.group]) g.traverse((o) => o.layers.enable(PROPS_LAYER));
@@ -747,7 +792,8 @@ export function CharacterStage() {
       // He sits against the wall, holding one pose; everything alive about him is procedural (see CharacterLife).
       const mixer = new THREE.AnimationMixer(model);
       const hipsRest = (hips as THREE.Object3D | null)?.position.clone() ?? new THREE.Vector3();
-      mixer.clipAction(seatedPose(poseGltf.animations[0], hipsRest)).play();
+      const seated = mixer.clipAction(anchorHips(poseGltf.animations[0], hipsRest));
+      seated.play();
       stage.position.copy(SEAT);
       mixer.update(0);
       stage.updateMatrixWorld(true);
@@ -764,6 +810,21 @@ export function CharacterStage() {
       phone.group.rotation.y = -0.3;
       // The props' contact shadow: centred on the row of props, reaching a little in front of the sofa.
       const propShadowCentre = new THREE.Vector3(-0.2, 0, wall.position.z + 1.2);
+
+      // The landing (skipped for reduced motion), which ends in exactly the held pose.
+      const landingClip = anchorHips(landingGltf.animations[0], hipsRest);
+      const landing = mixer.clipAction(landingClip);
+      landing.setLoop(THREE.LoopOnce, 1);
+      landing.clampWhenFinished = true;
+      const landingEnd = LANDING_DELAY + landingClip.duration;
+      // Seconds into the landing, or null once he's seated (or never landed).
+      let intro: number | null = matchMedia("(prefers-reduced-motion: reduce)").matches ? null : 0;
+      let touchedDown = false;
+      if (intro !== null) {
+        seated.stop();
+        landing.play();
+        mixer.update(0);
+      }
 
       // ── being alive ──
       let bubbleTimer = 0;
@@ -932,6 +993,8 @@ export function CharacterStage() {
         }
         const hit = found.hit;
         sound.poke();
+        // Mid-landing: he can't flinch yet (the clip owns his bones).
+        if (intro !== null) return;
         if (life.sleep > 0.4) return wake();
         const now = performance.now();
         pokes = now - lastPoke < 4000 ? pokes + 1 : 1;
@@ -980,9 +1043,9 @@ export function CharacterStage() {
         box.appendChild(z);
       };
 
-      // The dive opens with the character far above the frame and falls into view within ~0.5s.
-      // Compile shaders and upload textures before the clock starts, otherwise that first-frame
-      // stall is fed to the mixer as one big step and the fall is skipped.
+      // The dive opens with him far above the frame and falls into view within ~0.5 s: compile shaders and upload
+      // textures before the clock starts, otherwise that first-frame stall is fed to the mixer as one big step and
+      // the fall is skipped.
       // The contact shadows render this scene through cameras on other layers. Lights on layer 0 alone would drop
       // out of those renders, which changes the lighting setup twice a frame and makes three re-derive every lit
       // material's program each frame. The depth-only passes ignore them anyway.
@@ -1020,9 +1083,10 @@ export function CharacterStage() {
       finish.uniforms.reveal.value = 0;
       composer.render(0);
       setReady(true);
+      if (intro === null) offerHint();
       lastActivity = performance.now();
-      // A first buzz from his phone shortly after you arrive.
-      nextBuzz = lastActivity + 3500;
+      // A first buzz from his phone shortly after you arrive (after he's settled, if he's landing).
+      nextBuzz = lastActivity + 3500 + (intro === null ? 0 : landingEnd * 1000);
       // The full-quality sofa, fetched now and swapped in once he's sitting still.
       // Only where its 4K textures can show: a phone-sized frame never samples past the light model's 2K ones,
       // and it's 5 MB that a data saver shouldn't pay for.
@@ -1075,9 +1139,28 @@ export function CharacterStage() {
           propShadowDirty = true;
         }
 
+        if (intro !== null) {
+          intro += dt;
+          // Held above the frame until the fade-in is mostly done.
+          if (!touchedDown && intro > LANDING_DELAY + TOUCHDOWN) {
+            touchedDown = true;
+            sound.land();
+          }
+          mixer.update(intro > LANDING_DELAY ? dt : 0);
+          if (intro >= landingEnd) {
+            // Seated: the held pose takes over (the landing ended on it), and so does the procedural life.
+            intro = null;
+            landing.stop();
+            seated.play();
+            mixer.update(0);
+            lastActivity = now;
+            setTimeout(() => say(pick(LINES.landed)), 350);
+            offerHint();
+          }
+        }
         // Procedural life on the held pose: looking at you, breathing, dozing, flinching. (No mixer update: the
         // pose never changes, and `restore` puts back the bones life moved last frame.)
-        life.restore();
+        if (intro === null) life.restore();
         model.updateMatrixWorld(true);
         if (flag.dragging) flag.group.getWorldPosition(lookAt).y -= 0.4;
         else if (now < nudgeUntil) phone.group.getWorldPosition(lookAt);
@@ -1093,7 +1176,7 @@ export function CharacterStage() {
           lookAt.copy(glanceTarget);
         }
         if (now - lastActivity > DOZE_AFTER && now - wokeAt > 4000) sleepWanted = 1;
-        life.apply(dt, { lookAt, gaze: 1, sleep: sleepWanted, breathe: 1 });
+        if (intro === null) life.apply(dt, { lookAt, gaze: 1, sleep: sleepWanted, breathe: 1 });
         sound.update({ rustle: flag.motion, sleep: life.sleep, inhale: life.inhale, night: darkness });
         if (life.sleep > 0.8 && now - lastZ > 1500) {
           lastZ = now;
@@ -1106,6 +1189,9 @@ export function CharacterStage() {
           spin *= Math.exp(-SPIN_DAMPING * dt);
           if (Math.abs(spin) < 0.01) spin = 0;
         }
+        // Out and back once, easing in and out, and eased back to nothing if the hint ends early.
+        const swingTo = hintStart < 0 || stillMotion ? 0 : HINT_SWING * Math.sin(Math.min((now - hintStart) / 3200, 1) * Math.PI) ** 2;
+        swing += (swingTo - swing) * (1 - Math.exp(-dt * 6));
         placeCamera();
         flag.update(dt);
         lanternTilt.x.update(dt);
@@ -1179,6 +1265,7 @@ export function CharacterStage() {
       document.documentElement.removeEventListener("pointerleave", onLeave);
       document.removeEventListener("visibilitychange", onVisibility);
       document.title = baseTitle;
+      clearTimeout(hintTimer);
       removeEventListener("pointerdown", onFirstGesture);
       removeEventListener("keydown", onFirstGesture);
       sound.dispose();
@@ -1241,6 +1328,9 @@ export function CharacterStage() {
       <PaintingView open={paintingOpen} origin={paintingOrigin} onClose={closePainting} />
       <PhoneChat open={chatOpen} origin={chatOrigin} onClose={closeChat} />
       <div ref={zzzRef} className="zzz" aria-hidden />
+      <p className="stage-hint" data-on={hint ? "" : undefined} aria-hidden>
+        <span>‹</span> drag to look around <span>›</span>
+      </p>
       <button
         type="button"
         className="stage-sound"

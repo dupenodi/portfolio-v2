@@ -12,6 +12,8 @@ export type Daylight = {
   // Where the sun (or moon) sits outside the window: height and how far to the side (lower = longer shadows).
   keyY: number;
   keyX: number;
+  // How dark the sun's (or moon's) shadows are, 0-1.
+  keyShadow: number;
   sky: THREE.Color;
   ground: THREE.Color;
   hemi: number;
@@ -23,7 +25,7 @@ export type Daylight = {
   lamps: number;
 };
 
-type Preset = { key: number; keyIntensity: number; keyY: number; keyX: number; sky: number; ground: number; hemi: number; rim: number; rimIntensity: number; env: number; exposure: number; lamps: number };
+type Preset = { key: number; keyIntensity: number; keyY: number; keyX: number; keyShadow: number; sky: number; ground: number; hemi: number; rim: number; rimIntensity: number; env: number; exposure: number; lamps: number };
 
 const PRESETS: Record<Mode, Preset> = {
   // A mid-morning sun, warm but not golden, low enough that the window patch and leaves stretch up the wall;
@@ -33,6 +35,7 @@ const PRESETS: Record<Mode, Preset> = {
     keyIntensity: 3.1,
     keyY: 4.2,
     keyX: 5.6,
+    keyShadow: 1,
     sky: 0xf6f1e9,
     ground: 0xdcd3c6,
     hemi: 0.56,
@@ -48,6 +51,8 @@ const PRESETS: Record<Mode, Preset> = {
     keyIntensity: 0.42,
     keyY: 7.4,
     keyX: 3.5,
+    // Faint: the lantern is the light that matters at night, and a crisp moon shadow falls toward it.
+    keyShadow: 0.25,
     sky: 0x31353f,
     ground: 0x241f1b,
     hemi: 0.07,
@@ -72,6 +77,7 @@ export function lightingAt(t: number): Daylight {
     keyIntensity: n("keyIntensity"),
     keyY: n("keyY"),
     keyX: n("keyX"),
+    keyShadow: n("keyShadow"),
     sky: lerpColor(a.sky, b.sky, t),
     ground: lerpColor(a.ground, b.ground, t),
     hemi: n("hemi"),
@@ -207,7 +213,28 @@ export class Lantern {
 
     this.light = new THREE.PointLight(0xffb56b, 0, 0, 2);
     this.light.position.y = 0.2 + height * 0.55;
+    // At night it's the room's main light, so it throws the shadows: of him, the sofa, the plant. Small and well
+    // blurred, like a big paper shade's. (It stays on while the lamp is dark: the lamp being off hides the light,
+    // which the page precompiles for, where turning the shadow off would recompile every material.)
+    this.light.castShadow = true;
+    this.light.shadow.mapSize.setScalar(512);
+    this.light.shadow.radius = 6;
+    this.light.shadow.bias = -0.002;
+    this.light.shadow.normalBias = 0.02;
+    this.light.shadow.camera.near = 0.05;
+    this.light.shadow.camera.far = 9;
     this.group.add(this.light);
+    // The bulb is inside the shade: the shade mustn't block its light (it still casts the moon's and sun's shadows).
+    // Its point-light shadow material draws nothing. (Discarded in the shader: three copies `visible` and `alphaTest`
+    // from the shade's own material onto any custom shadow material, so those can't turn it off.)
+    const noShadow = new THREE.MeshDistanceMaterial();
+    noShadow.onBeforeCompile = (shader) => {
+      // Always true, but not something the compiler can see: an unconditional discard gets the colour output stripped,
+      // and drawing into the shadow map without one is a GL error.
+      shader.fragmentShader = shader.fragmentShader.replace("void main() {", "void main() {\n\tif ( gl_FragCoord.z >= 0.0 ) discard;");
+    };
+    noShadow.customProgramCacheKey = () => "lantern-shade-no-shadow";
+    shade.customDistanceMaterial = noShadow;
   }
 
   setGlow(v: number) {

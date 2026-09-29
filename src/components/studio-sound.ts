@@ -169,6 +169,14 @@ export class StudioSound {
     this.tone(at, { from: 180, to: 120, gain: 0.06, dur: 0.08 });
   }
 
+  /** A soft thud: him landing on the studio floor. */
+  land() {
+    if (!this.live) return;
+    const at = this.ctx!.currentTime;
+    this.tone(at, { from: 110, to: 45, gain: 0.16, dur: 0.22, attack: 0.005 });
+    this.burst(at, { gain: 0.1, freq: 500, q: 0.6, attack: 0.004, decay: 0.12 });
+  }
+
   /** Mumbled syllables for a speech bubble: one soft blip per syllable, pitched like a question if it is one. */
   talk(text: string) {
     if (!this.live) return;

@@ -264,6 +264,67 @@ html {
   color: var(--ink);
 }
 
+/* A quiet, one-time note that the studio turns (see HINT_SWING in character-stage), in the controls' type. */
+.stage-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  z-index: 2;
+  margin: 0;
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.stage-hint[data-on] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.stage-hint span {
+  display: inline-block;
+  color: var(--ink-soft);
+}
+
+.stage-hint[data-on] span:first-child {
+  animation: hint-nudge-left 3.2s ease-in-out 1;
+}
+
+.stage-hint[data-on] span:last-child {
+  animation: hint-nudge-right 3.2s ease-in-out 1;
+}
+
+@keyframes hint-nudge-left {
+  50% {
+    transform: translateX(-3px);
+  }
+}
+
+@keyframes hint-nudge-right {
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@media (max-width: 640px) {
+  .stage-hint {
+    bottom: 84px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-hint,
+  .stage-hint span {
+    transition: opacity 700ms ease;
+    animation: none !important;
+  }
+}
+
 button[data-busy] {
   opacity: 0 !important;
   pointer-events: none !important;
