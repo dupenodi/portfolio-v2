@@ -41,7 +41,7 @@ export function IntroCopy({ data }: { data: LinkData }) {
       >
         <p>hi, i&apos;m sharath.</p>
         <p>
-          was the founding fullstack engineer at{" "}
+          prev founding fullstack{" "}
           <HoverCard
             href={site.companyUrl}
             width={288}
@@ -52,13 +52,12 @@ export function IntroCopy({ data }: { data: LinkData }) {
                 href={site.companyUrl}
                 host="niti.ai"
                 image="/media/niti-preview.jpg"
-                caption="decision intelligence for marketing spend. aug 2023 - sep 2026."
+                caption="decision intelligence for marketing spend. prev · aug '23 – sep '26."
               />
             }
           >
-            {site.company.toLowerCase()}
+            @niti.ai
           </HoverCard>
-          .
         </p>
         <p style={{ color: "var(--ink-soft)" }}>{site.heroHeadline}</p>
 

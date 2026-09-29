@@ -13,7 +13,7 @@ export type XCard = {
 const SNAPSHOT: XCard = {
   name: "sharathhh",
   handle: "dupenodi",
-  bio: "http://dupenodi.dev/resume.pdf\n\npls hire me\n\nfullstack engg. excellent design & product thinking. intern - tech lead at http://niti.ai",
+  bio: "http://dupenodi.dev/resume.pdf\n\npls hire me\n\nfullstack engg. excellent design & product thinking. prev @niti.ai",
   avatar: "https://pbs.twimg.com/profile_images/2061743997543174144/ZD2-0DLt_400x400.jpg",
   verified: true,
   followers: 71,

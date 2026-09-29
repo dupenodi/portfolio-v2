@@ -19,8 +19,8 @@ export type LinkedInCard = {
 const SNAPSHOT: LinkedInCard = {
   name: "Sarath Donepudi",
   headline: null,
-  about: "I'm a Founding Engineer who's spent the last 3 years building AI-first products from 0 to…",
-  company: "Niti AI",
+  about: "prev founding engineer @ niti.ai. spent the last few years building AI-first products from 0 to…",
+  company: "prev · Niti AI",
   school: "SSN College of Engineering",
   location: "Bengaluru",
   connections: "500+",

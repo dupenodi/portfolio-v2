@@ -5,7 +5,7 @@ import { education, skillGroups, workItems } from "@/lib/work-items";
 export const metadata = createMetadata({
   title: "work",
   description:
-    "founding fullstack engineer at niti ai. loop, client sdks, rag engagement, and the infra behind 100k+ daily users.",
+    "prev founding fullstack @ niti.ai. loop, client sdks, rag engagement, and the infra behind 100k+ daily users.",
   path: "/work",
 });
 
