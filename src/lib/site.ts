@@ -13,14 +13,14 @@ export const site = {
   },
   colophon: "bengaluru, india · 2026",
   description:
-    "founding fullstack engineer at niti ai. builds growth products, client sdks, and the infra that serves 100k+ daily users.",
+    "founding fullstack engineer at niti ai (2023-2026). builds growth products, client sdks, and the infra that serves 100k+ daily users.",
   company: "Niti AI",
   companyUrl: "https://niti.ai",
-  heroHeadline: "i build the product layer that makes ai systems work in production.",
+  heroHeadline: "i build products end to end, including the boring middle between a demo and something people actually use.",
   heroBio: {
     company: "niti ai",
     workHref: "/work",
-    text: "i joined with the founding team and still own the stack end to end. built loop, the sdks, and the rag engine that drives 60k+ monthly clicks across client apps. the part i care about is the boring middle: the data pipelines, the system design, and the product plumbing that holds together when real users touch it.",
+    text: "i joined with the founding team and owned the stack end to end. built loop, the sdks, and the rag engine that drove 60k+ monthly clicks across client apps. the part i care about is the boring middle: the data pipelines, the system design, and the product plumbing that holds together when real users touch it.",
     emphasis: "data pipelines, the system design, and the product plumbing",
   },
   railRole: {
