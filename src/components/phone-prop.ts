@@ -134,7 +134,7 @@ export class PhoneProp {
       g.fillText("sharath", x + 60, y + 32);
       g.font = "400 16px system-ui, -apple-system, sans-serif";
       g.fillStyle = "rgba(255,255,255,0.85)";
-      g.fillText("hey! tap to ask me anything", x + 60, y + 56);
+      g.fillText("yo… you up?", x + 60, y + 56);
       g.fillStyle = "rgba(255,255,255,0.55)";
       g.textAlign = "right";
       g.font = "400 14px system-ui, -apple-system, sans-serif";

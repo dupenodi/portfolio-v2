@@ -1,6 +1,5 @@
-// Every sound in the studio is synthesized on the fly with Web Audio: no files to load. Off until the visitor
-// turns it on (browsers only allow audio after a gesture anyway), and kept quiet: it should sound like a room,
-// not a game.
+// Every sound in the studio is synthesized on the fly with Web Audio: no files to load. On by default
+// (browsers still only allow audio after a gesture), and kept quiet: it should sound like a room, not a game.
 
 type Ctx = AudioContext;
 

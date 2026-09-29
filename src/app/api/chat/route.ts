@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       model: MODEL,
       stream: true,
       max_tokens: 400,
-      temperature: 0.6,
+      temperature: 0.85,
       messages: [{ role: "system", content: await chatSystemPrompt() }, ...history],
     }),
     signal: request.signal,

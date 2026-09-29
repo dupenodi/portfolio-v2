@@ -125,7 +125,7 @@ export function CharacterStage() {
   const openPaintingRef = useRef<() => void>(null);
   const [mode, setMode] = useState<Mode>(initialMode);
   const soundToggleRef = useRef<() => void>(null);
-  const [soundOn, setSoundOn] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
   // The phone on the floor opens a chat; it zooms up from where the phone is on screen.
   const [chatOpen, setChatOpen] = useState(false);
   const [chatOrigin, setChatOrigin] = useState<{ x: number; y: number } | null>(null);
@@ -409,16 +409,18 @@ export function CharacterStage() {
       } catch {}
     };
 
-    // Sound, synthesized; off until asked for. Remembered per visitor, but still needs a gesture to start.
+    // Sound, synthesized; on by default. Remembered per visitor, but still needs a gesture to start.
     const sound = new StudioSound();
-    // Interaction sounds (hovers, presses, copies) follow the same switch, so the page is silent until asked.
+    // Interaction sounds (hovers, presses, copies) follow the same switch.
     bindCues();
-    setCues(false);
     setCueVolume(0.55);
-    let soundWanted = false;
+    let soundWanted = true;
     try {
-      soundWanted = localStorage.getItem("studio-sound") === "on";
+      const saved = localStorage.getItem("studio-sound");
+      if (saved === "off") soundWanted = false;
     } catch {}
+    setCues(soundWanted);
+    setSoundOn(soundWanted);
     const setSound = (on: boolean) => {
       soundWanted = on;
       if (on) sound.enable().catch(() => {});

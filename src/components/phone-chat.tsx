@@ -9,8 +9,8 @@ import { site } from "@/lib/site";
 type Message = { role: "user" | "assistant"; content: string };
 
 const GREETING: Message[] = [
-  { role: "assistant", content: "hey! this is an ai version of me, texting from my phone." },
-  { role: "assistant", content: "ask me anything about my work, projects, or what i'm up to." },
+  { role: "assistant", content: "yo…" },
+  { role: "assistant", content: "didn't think you'd actually open this. what's up." },
 ];
 
 // The model splits longer replies with blank lines: each part becomes its own bubble, like real texting.
