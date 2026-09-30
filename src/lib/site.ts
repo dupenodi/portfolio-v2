@@ -16,7 +16,7 @@ export const site = {
     "prev founding fullstack @ niti.ai · '23–'26. growth products, client sdks, and the infra behind 100k+ daily users.",
   company: "Niti AI",
   companyUrl: "https://niti.ai",
-  heroHeadline: "i build products end to end, including the boring middle between a demo and something people actually use.",
+  heroHeadline: "i build products from zero. marketing intelligence for 20+ brands. loop at 100k+ daily users.",
   heroBio: {
     company: "niti.ai",
     workHref: "/work",
@@ -45,7 +45,6 @@ export const site = {
     "founding engineer",
     "product engineering",
     "platform engineering",
-    "RAG",
     "Niti AI",
     "Bengaluru",
   ],
