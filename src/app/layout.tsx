@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: site.name,
-  description: "Welcome.",
+  description: "Sharath Donepudi. Former founding engineer at Niti AI. Built marketing intelligence for 20+ brands and Loop from zero to 100k+ daily users.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
