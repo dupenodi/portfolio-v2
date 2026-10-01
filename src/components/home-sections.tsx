@@ -131,9 +131,12 @@ export function HomeSections({
           </div>
           <div>
             <p className="label">talk</p>
-            <a href={site.calendly} {...external} data-cuelume-hover="tick">
-              15 minutes, on calendly
-            </a>
+            <p>
+              15 minutes, on {" "}
+              <a href={site.calendly} {...external} data-cuelume-hover="tick">calendly</a>
+              {" or "}
+              <a href="https://cal.com/sarath-dpudi/15min" {...external} data-cuelume-hover="tick">cal.com</a>
+            </p>
           </div>
           <div>
             <p className="label">elsewhere</p>
