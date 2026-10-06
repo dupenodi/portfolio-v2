@@ -1,25 +1,15 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-import { z } from "zod";
+import { publicDb } from "@/lib/supabase";
 
-const postsDirectory = path.join(process.cwd(), "content/posts");
+// Essays live in Supabase (public.posts). The public client only ever sees non-drafts.
 
-const metadataSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  date: z
-    .union([z.string(), z.date()])
-    .transform((value) =>
-      value instanceof Date ? value.toISOString().slice(0, 10) : value
-    ),
-  draft: z.boolean().optional().default(false),
-  highlight: z.boolean().optional().default(false),
-  tags: z.array(z.string()).optional().default([]),
-  answers: z.array(z.string()).optional().default([]),
-});
-
-export type PostMetadata = z.infer<typeof metadataSchema>;
+export type PostMetadata = {
+  title: string;
+  description: string;
+  date: string;
+  draft: boolean;
+  tags: string[];
+  answers: string[];
+};
 
 export type Post = {
   slug: string;
@@ -27,51 +17,57 @@ export type Post = {
   content: string;
 };
 
-function getMdxFiles(): string[] {
-  if (!fs.existsSync(postsDirectory)) return [];
-  return fs.readdirSync(postsDirectory).filter((file) => file.endsWith(".mdx"));
+type Row = {
+  slug: string;
+  title: string;
+  description: string;
+  body: string;
+  published_at: string;
+  draft: boolean;
+  tags: string[];
+  answers: string[];
+};
+
+const COLUMNS = "slug, title, description, body, published_at, draft, tags, answers";
+
+function toPost(row: Row): Post {
+  return {
+    slug: row.slug,
+    metadata: {
+      title: row.title,
+      description: row.description,
+      date: row.published_at,
+      draft: row.draft,
+      tags: row.tags,
+      answers: row.answers,
+    },
+    content: row.body,
+  };
 }
 
-function parsePost(filename: string): Post {
-  const slug = path.basename(filename, ".mdx");
-  const raw = fs.readFileSync(path.join(postsDirectory, filename), "utf-8");
-  const { data, content } = matter(raw);
-  const metadata = metadataSchema.parse(data);
-
-  return { slug, metadata, content };
+// Newest first.
+export async function getPublishedPosts(): Promise<Post[]> {
+  const db = publicDb();
+  if (!db) return [];
+  const { data, error } = await db.from("posts").select(COLUMNS).eq("draft", false).order("published_at", { ascending: false });
+  if (error) {
+    console.error("posts:", error.message);
+    return [];
+  }
+  return (data as Row[]).map(toPost);
 }
 
-export function getAllPosts(): Post[] {
-  return getMdxFiles()
-    .map(parsePost)
-    .sort(
-      (a, b) =>
-        new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime()
-    );
+export async function getPostBySlug(slug: string): Promise<Post | undefined> {
+  const posts = await getPublishedPosts();
+  return posts.find((post) => post.slug === slug);
 }
 
-export function getPublishedPosts(): Post[] {
-  return getAllPosts().filter((post) => !post.metadata.draft);
-}
-
-export function getPostBySlug(slug: string): Post | undefined {
-  return getAllPosts().find((post) => post.slug === slug);
-}
-
-export function getHighlightedPost(): Post | undefined {
-  const published = getPublishedPosts();
-  return published.find((post) => post.metadata.highlight) ?? published[0];
-}
-
-export function getAdjacentPosts(slug: string): {
-  prev: Post | null;
-  next: Post | null;
-} {
-  const posts = getPublishedPosts();
+export async function getAdjacentPosts(slug: string): Promise<{ prev: Post | null; next: Post | null }> {
+  const posts = await getPublishedPosts();
   const index = posts.findIndex((post) => post.slug === slug);
   return {
     prev: index > 0 ? (posts[index - 1] ?? null) : null,
-    next: index < posts.length - 1 ? (posts[index + 1] ?? null) : null,
+    next: index >= 0 && index < posts.length - 1 ? (posts[index + 1] ?? null) : null,
   };
 }
 

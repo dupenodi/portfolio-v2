@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.1.130"],
   poweredByHeader: false,
   compress: true,
   images: {
@@ -10,27 +11,25 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      // Photos uploaded from /admin, served from the Supabase "photos" bucket.
       {
         protocol: "https",
-        hostname: "buymeachai.ezee.li",
-        pathname: "/assets/images/**",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/photos/**",
       },
     ],
   },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
-  async rewrites() {
+  // The studio's models and textures: served from cache for a day, then from cache while revalidating for a week,
+  // so a returning visitor's studio loads without a round trip per file.
+  async headers() {
     return [
-      { source: "/admin", destination: "/admin/index.html" },
-    ];
-  },
-  async redirects() {
-    return [
-      { source: "/blog", destination: "/writing", permanent: true },
-      { source: "/blog/:slug", destination: "/writing/:slug", permanent: true },
-      { source: "/now", destination: "/", permanent: true },
-      { source: "/uses", destination: "/", permanent: true },
+      {
+        source: "/character/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
     ];
   },
 };
