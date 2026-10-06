@@ -82,7 +82,9 @@ export function SiteCard({ href, host, image, caption }: { href?: string; host: 
       </div>
       <div className="site-card-shot">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={image} alt="" width={960} height={540} decoding="async" />
+        {/* Keep the complete screenshot visible: cover, zoom and drift crop edge text. */}
+        <img src={image} alt="" width={960} height={540} decoding="async"
+          style={{ objectFit: "contain", objectPosition: "center", scale: "1", translate: "none" }} />
       </div>
       {caption ? <p className="site-card-caption">{caption}</p> : null}
     </Shell>
