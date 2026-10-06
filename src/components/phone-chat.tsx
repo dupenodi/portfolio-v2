@@ -10,7 +10,7 @@ type Message = { role: "user" | "assistant"; content: string };
 
 const GREETING: Message[] = [
   { role: "assistant", content: "yo…" },
-  { role: "assistant", content: "didn't think you'd actually open this. what's up." },
+  { role: "assistant", content: "didn't think you'd actually open this. ask me about myself, or just say hi." },
 ];
 
 // The model splits longer replies with blank lines: each part becomes its own bubble, like real texting.
